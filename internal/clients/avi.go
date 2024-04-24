@@ -7,6 +7,7 @@ package clients
 import (
 	"context"
 	"encoding/json"
+	"github.com/dana-team/provider-avi/apis/v1beta1"
 
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 	"github.com/pkg/errors"
@@ -14,8 +15,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/crossplane/upjet/pkg/terraform"
-
-	"github.com/upbound/upjet-provider-template/apis/v1beta1"
 )
 
 const (
@@ -24,7 +23,13 @@ const (
 	errGetProviderConfig    = "cannot get referenced ProviderConfig"
 	errTrackUsage           = "cannot track ProviderConfig usage"
 	errExtractCredentials   = "cannot extract credentials"
-	errUnmarshalCredentials = "cannot unmarshal template credentials as JSON"
+	errUnmarshalCredentials = "cannot unmarshal avi credentials as JSON"
+
+	keyAviUsername   = "avi_username"
+	keyAviTenant     = "avi_tenant"
+	keyAviPassword   = "avi_password"
+	keyAviController = "avi_controller"
+	keyAviVersion    = "avi_version"
 )
 
 // TerraformSetupBuilder builds Terraform a terraform.SetupFn function which
@@ -63,10 +68,27 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 		}
 
 		// Set credentials in Terraform provider configuration.
-		/*ps.Configuration = map[string]any{
-			"username": creds["username"],
-			"password": creds["password"],
-		}*/
+		ps.Configuration = map[string]any{}
+		if v, ok := creds[keyAviUsername]; ok {
+			ps.Configuration[keyAviUsername] = v
+		}
+
+		if v, ok := creds[keyAviTenant]; ok {
+			ps.Configuration[keyAviTenant] = v
+		}
+
+		if v, ok := creds[keyAviPassword]; ok {
+			ps.Configuration[keyAviPassword] = v
+		}
+
+		if v, ok := creds[keyAviController]; ok {
+			ps.Configuration[keyAviController] = v
+		}
+
+		if v, ok := creds[keyAviVersion]; ok {
+			ps.Configuration[keyAviVersion] = v
+		}
+
 		return ps, nil
 	}
 }

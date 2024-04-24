@@ -1,0 +1,13 @@
+apiVersion: avi.crossplane.io/v1alpha1
+kind: Pool
+metadata:
+  name: crossplane-test
+spec:
+  forProvider:
+    name: testy-test
+    servers:
+      - ip:
+        - type: "V4"
+          addr: "1.1.1.1"
+  providerConfigRef:
+    name: default
