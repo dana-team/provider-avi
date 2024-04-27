@@ -7,6 +7,7 @@ package clients
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/dana-team/provider-avi/apis/v1beta1"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -66,26 +67,8 @@ func TerraformSetupBuilder(tfProvider *schema.Provider) terraform.SetupFn {
 		}
 
 		// Set credentials in Terraform provider configuration.
-		ps.Configuration = map[string]any{}
-		if v, ok := creds[keyAviUsername]; ok {
-			ps.Configuration[keyAviUsername] = v
-		}
-
-		if v, ok := creds[keyAviTenant]; ok {
-			ps.Configuration[keyAviTenant] = v
-		}
-
-		if v, ok := creds[keyAviPassword]; ok {
-			ps.Configuration[keyAviPassword] = v
-		}
-
-		if v, ok := creds[keyAviController]; ok {
-			ps.Configuration[keyAviController] = v
-		}
-
-		if v, ok := creds[keyAviVersion]; ok {
-			ps.Configuration[keyAviVersion] = v
-		}
+		authConfig := buildAuthConfig(creds)
+		ps.Configuration = authConfig
 
 		return ps, errors.Wrap(configureTFProviderMeta(ctx, &ps, *tfProvider), "failed to configure the Terraform AzureAD provider meta")
 	}
@@ -106,4 +89,31 @@ func configureTFProviderMeta(ctx context.Context, ps *terraform.Setup, p schema.
 	}
 	ps.Meta = p.Meta()
 	return nil
+}
+
+// buildAuthConfig builds the auth configuration for the provider.
+func buildAuthConfig(creds map[string]string) map[string]any {
+	authConfig := map[string]any{}
+
+	if v, ok := creds[keyAviUsername]; ok {
+		authConfig[keyAviUsername] = v
+	}
+
+	if v, ok := creds[keyAviTenant]; ok {
+		authConfig[keyAviTenant] = v
+	}
+
+	if v, ok := creds[keyAviPassword]; ok {
+		authConfig[keyAviPassword] = v
+	}
+
+	if v, ok := creds[keyAviController]; ok {
+		authConfig[keyAviController] = v
+	}
+
+	if v, ok := creds[keyAviVersion]; ok {
+		authConfig[keyAviVersion] = v
+	}
+
+	return authConfig
 }

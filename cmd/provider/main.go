@@ -7,15 +7,16 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/crossplane/crossplane-runtime/pkg/certificates"
-	"github.com/crossplane/crossplane-runtime/pkg/reconciler/managed"
-	"github.com/crossplane/crossplane-runtime/pkg/statemetrics"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
-	"sigs.k8s.io/controller-runtime/pkg/metrics"
 	"time"
+
+	"github.com/crossplane/crossplane-runtime/pkg/certificates"
+	"github.com/crossplane/crossplane-runtime/pkg/reconciler/managed"
+	"github.com/crossplane/crossplane-runtime/pkg/statemetrics"
+	"sigs.k8s.io/controller-runtime/pkg/metrics"
 
 	"github.com/alecthomas/kingpin/v2"
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"

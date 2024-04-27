@@ -6,6 +6,7 @@ package config
 
 import (
 	_ "embed"
+
 	ujconfig "github.com/crossplane/upjet/pkg/config"
 	"github.com/crossplane/upjet/pkg/registry/reference"
 	"github.com/dana-team/provider-avi/config/avi"
