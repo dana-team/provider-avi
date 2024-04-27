@@ -712,6 +712,8 @@ type PoolInitParameters struct {
 	// Used to gracefully disable a server. Virtual service waits for the specified time before terminating the existing connections  to the servers that are disabled. Allowed values are 1-7200. Special values are 0 - immediate, -1 - infinite. Unit is min. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
 	GracefulDisableTimeout *string `json:"gracefulDisableTimeout,omitempty" tf:"graceful_disable_timeout,omitempty"`
 
+	GracefulHmDownDisableTimeout *string `json:"gracefulHmDownDisableTimeout,omitempty" tf:"graceful_hm_down_disable_timeout,omitempty"`
+
 	// Indicates if the pool is a site-persistence pool. Field introduced in 17.2.1. Allowed in enterprise edition with any value, enterprise with cloud services edition.
 	GslbSpEnabled *string `json:"gslbSpEnabled,omitempty" tf:"gslb_sp_enabled,omitempty"`
 
@@ -936,6 +938,8 @@ type PoolObservation struct {
 
 	// Used to gracefully disable a server. Virtual service waits for the specified time before terminating the existing connections  to the servers that are disabled. Allowed values are 1-7200. Special values are 0 - immediate, -1 - infinite. Unit is min. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
 	GracefulDisableTimeout *string `json:"gracefulDisableTimeout,omitempty" tf:"graceful_disable_timeout,omitempty"`
+
+	GracefulHmDownDisableTimeout *string `json:"gracefulHmDownDisableTimeout,omitempty" tf:"graceful_hm_down_disable_timeout,omitempty"`
 
 	// Indicates if the pool is a site-persistence pool. Field introduced in 17.2.1. Allowed in enterprise edition with any value, enterprise with cloud services edition.
 	GslbSpEnabled *string `json:"gslbSpEnabled,omitempty" tf:"gslb_sp_enabled,omitempty"`
@@ -1189,6 +1193,9 @@ type PoolParameters struct {
 	// Used to gracefully disable a server. Virtual service waits for the specified time before terminating the existing connections  to the servers that are disabled. Allowed values are 1-7200. Special values are 0 - immediate, -1 - infinite. Unit is min. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
 	// +kubebuilder:validation:Optional
 	GracefulDisableTimeout *string `json:"gracefulDisableTimeout,omitempty" tf:"graceful_disable_timeout,omitempty"`
+
+	// +kubebuilder:validation:Optional
+	GracefulHmDownDisableTimeout *string `json:"gracefulHmDownDisableTimeout,omitempty" tf:"graceful_hm_down_disable_timeout,omitempty"`
 
 	// Indicates if the pool is a site-persistence pool. Field introduced in 17.2.1. Allowed in enterprise edition with any value, enterprise with cloud services edition.
 	// +kubebuilder:validation:Optional
@@ -1818,7 +1825,7 @@ type SubnetParameters struct {
 }
 
 type SvrRespCodeInitParameters struct {
-	Codes []*float64 `json:"codes,omitempty" tf:"codes,omitempty"`
+	Codes []*int64 `json:"codes,omitempty" tf:"codes,omitempty"`
 
 	Ranges []RangesInitParameters `json:"ranges,omitempty" tf:"ranges,omitempty"`
 
@@ -1826,7 +1833,7 @@ type SvrRespCodeInitParameters struct {
 }
 
 type SvrRespCodeObservation struct {
-	Codes []*float64 `json:"codes,omitempty" tf:"codes,omitempty"`
+	Codes []*int64 `json:"codes,omitempty" tf:"codes,omitempty"`
 
 	Ranges []RangesObservation `json:"ranges,omitempty" tf:"ranges,omitempty"`
 
@@ -1836,7 +1843,7 @@ type SvrRespCodeObservation struct {
 type SvrRespCodeParameters struct {
 
 	// +kubebuilder:validation:Optional
-	Codes []*float64 `json:"codes,omitempty" tf:"codes,omitempty"`
+	Codes []*int64 `json:"codes,omitempty" tf:"codes,omitempty"`
 
 	// +kubebuilder:validation:Optional
 	Ranges []RangesParameters `json:"ranges,omitempty" tf:"ranges,omitempty"`
@@ -1908,8 +1915,8 @@ type PoolStatus struct {
 // +kubebuilder:storageversion
 
 // Pool is the Schema for the Pools API. Creates and manages Avi Pool.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,avi}

@@ -2316,6 +2316,11 @@ func (in *PoolInitParameters) DeepCopyInto(out *PoolInitParameters) {
 		*out = new(string)
 		**out = **in
 	}
+	if in.GracefulHmDownDisableTimeout != nil {
+		in, out := &in.GracefulHmDownDisableTimeout, &out.GracefulHmDownDisableTimeout
+		*out = new(string)
+		**out = **in
+	}
 	if in.GslbSpEnabled != nil {
 		in, out := &in.GslbSpEnabled, &out.GslbSpEnabled
 		*out = new(string)
@@ -2789,6 +2794,11 @@ func (in *PoolObservation) DeepCopyInto(out *PoolObservation) {
 		*out = new(string)
 		**out = **in
 	}
+	if in.GracefulHmDownDisableTimeout != nil {
+		in, out := &in.GracefulHmDownDisableTimeout, &out.GracefulHmDownDisableTimeout
+		*out = new(string)
+		**out = **in
+	}
 	if in.GslbSpEnabled != nil {
 		in, out := &in.GslbSpEnabled, &out.GslbSpEnabled
 		*out = new(string)
@@ -3232,6 +3242,11 @@ func (in *PoolParameters) DeepCopyInto(out *PoolParameters) {
 	}
 	if in.GracefulDisableTimeout != nil {
 		in, out := &in.GracefulDisableTimeout, &out.GracefulDisableTimeout
+		*out = new(string)
+		**out = **in
+	}
+	if in.GracefulHmDownDisableTimeout != nil {
+		in, out := &in.GracefulHmDownDisableTimeout, &out.GracefulHmDownDisableTimeout
 		*out = new(string)
 		**out = **in
 	}
@@ -4781,11 +4796,11 @@ func (in *SvrRespCodeInitParameters) DeepCopyInto(out *SvrRespCodeInitParameters
 	*out = *in
 	if in.Codes != nil {
 		in, out := &in.Codes, &out.Codes
-		*out = make([]*float64, len(*in))
+		*out = make([]*int64, len(*in))
 		for i := range *in {
 			if (*in)[i] != nil {
 				in, out := &(*in)[i], &(*out)[i]
-				*out = new(float64)
+				*out = new(int64)
 				**out = **in
 			}
 		}
@@ -4825,11 +4840,11 @@ func (in *SvrRespCodeObservation) DeepCopyInto(out *SvrRespCodeObservation) {
 	*out = *in
 	if in.Codes != nil {
 		in, out := &in.Codes, &out.Codes
-		*out = make([]*float64, len(*in))
+		*out = make([]*int64, len(*in))
 		for i := range *in {
 			if (*in)[i] != nil {
 				in, out := &(*in)[i], &(*out)[i]
-				*out = new(float64)
+				*out = new(int64)
 				**out = **in
 			}
 		}
@@ -4869,11 +4884,11 @@ func (in *SvrRespCodeParameters) DeepCopyInto(out *SvrRespCodeParameters) {
 	*out = *in
 	if in.Codes != nil {
 		in, out := &in.Codes, &out.Codes
-		*out = make([]*float64, len(*in))
+		*out = make([]*int64, len(*in))
 		for i := range *in {
 			if (*in)[i] != nil {
 				in, out := &(*in)[i], &(*out)[i]
-				*out = new(float64)
+				*out = new(int64)
 				**out = **in
 			}
 		}
