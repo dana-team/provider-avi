@@ -43,7 +43,7 @@ import (
 
 func main() {
 	var (
-		app               = kingpin.New(filepath.Base(os.Args[0]), "Terraform based Crossplane provider for Azuread").DefaultEnvars()
+		app               = kingpin.New(filepath.Base(os.Args[0]), "Terraform based Crossplane provider for Avi").DefaultEnvars()
 		deprecationAction = func(flagName string) kingpin.Action {
 			return func(c *kingpin.ParseContext) error {
 				_, err := fmt.Fprintf(os.Stderr, "warning: Command-line flag %q is deprecated and no longer used. It will be removed in a future release. Please remove it from all of your configurations (ControllerConfigs, etc.).\n", flagName)
@@ -75,7 +75,7 @@ func main() {
 	ctrl.SetLogger(zap.New(zap.WriteTo(io.Discard)))
 
 	zl := zap.New(zap.UseDevMode(*debug))
-	logr := logging.NewLogrLogger(zl.WithName("provider-azuread"))
+	logr := logging.NewLogrLogger(zl.WithName("provider-avi"))
 	if *debug {
 		// The controller-runtime runs with a no-op logger by default. It is
 		// *very* verbose even at info level, so we only provide it a real
