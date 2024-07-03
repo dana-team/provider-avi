@@ -7,54 +7,84 @@ Avi API.
 
 ## Getting Started
 
-Install the provider by using the following command after changing the image tag
-to the [latest release](https://marketplace.upbound.io/providers/dana-team/provider-avi):
-```
-up ctp provider install dana-team/provider-avi:v0.1.0
-```
+### Install the provider
 
-Alternatively, you can use declarative installation:
-```
-cat <<EOF | kubectl apply -f -
+```yaml
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: provider-avi
+  name: provider-dns
 spec:
-  package: dana-team/provider-avi:v0.1.0
-EOF
+  package: ghcr.io/dana-team/provider-avi:<release>
+  runtimeConfigRef:
+    apiVersion: pkg.crossplane.io/v1beta1
+    kind: DeploymentRuntimeConfig
+    name: config
 ```
 
-Notice that in this example Provider resource is referencing ControllerConfig with debug enabled.
-
-You can see the API reference [here](https://doc.crds.dev/github.com/dana-team/provider-avi).
-
-## Developing
-
-Run code-generation pipeline:
-```console
-go run cmd/generator/main.go "$PWD"
+```yaml
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: config
+spec:
+  deploymentTemplate:
+    spec:
+      selector:
+        matchLabels:
+          pkg.crossplane.io/provider: provider-avi
+      template:
+        spec:
+          containers:
+          - args:
+            - --debug
+            name: package-runtime
 ```
 
-Run against a Kubernetes cluster:
+## Configuration
 
-```console
-make run
+To connect to the provider, create the following `secret`:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: example-creds
+  namespace: crossplane-system
+type: Opaque
+stringData:
+  credentials: |
+    {
+      "avi_username": "<AVI-USERNAME>",
+      "avi_tenant": "<AVI-TENANT>",
+      "avi_password": "<AVI-PASSWORD>",
+      "avi_controller": "<AVI-CONTROLLER>",
+      "avi_version": "<AVI-VERSION>"
+    }
 ```
 
-Build, push, and install:
+Then create the `ProviderConfig`:
 
-```console
-make all
+```yaml
+apiVersion: avi.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: default
+spec:
+  credentials:
+    source: Secret
+    secretRef:
+      name: example-creds
+      namespace: crossplane-system
+      key: credentials
 ```
 
-Build binary:
+## Resources
 
-```console
-make build
+To Install the CRDs manually, run:
+
+```bash
+$ go install golang.org/x/tools/cmd/goimports@latest
+$ make generate
+$ kubectl apply -f package/crds
 ```
-
-## Report a Bug
-
-For filing bugs, suggesting improvements, or requesting new features, please
-open an [issue](https://github.com/dana-team/provider-avi/issues).

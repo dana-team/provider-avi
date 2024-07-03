@@ -4,15 +4,11 @@
 PROJECT_NAME ?= provider-avi
 PROJECT_REPO ?= github.com/dana-team/$(PROJECT_NAME)
 
-export TERRAFORM_VERSION ?= 1.5.5
+export TERRAFORM_VERSION ?= 1.8.2
 
 export TERRAFORM_PROVIDER_SOURCE ?= vmware/avi
 export TERRAFORM_PROVIDER_REPO ?= https://github.com/vmware/terraform-provider-avi
-export TERRAFORM_PROVIDER_VERSION ?= 22.1.6
-export TERRAFORM_PROVIDER_DOWNLOAD_NAME ?= terraform-provider-avi
-export TERRAFORM_PROVIDER_DOWNLOAD_URL_PREFIX ?= https://github.com/vmware/$(TERRAFORM_PROVIDER_DOWNLOAD_NAME)/releases/download/v$(TERRAFORM_PROVIDER_VERSION)
-export TERRAFORM_PROVIDER_DOWNLOAD_URL_PREFIX ?= https://releases.hashicorp.com/$(TERRAFORM_PROVIDER_DOWNLOAD_NAME)/$(TERRAFORM_PROVIDER_VERSION)
-export TERRAFORM_NATIVE_PROVIDER_BINARY ?= terraform-provider-avi_v22.1.6
+export TERRAFORM_PROVIDER_VERSION ?= 30.2.1
 export TERRAFORM_DOCS_PATH ?= website/docs/r
 
 PLATFORMS ?= linux_amd64 linux_arm64
@@ -40,7 +36,7 @@ NPROCS ?= 1
 # to half the number of CPU cores.
 GO_TEST_PARALLEL := $(shell echo $$(( $(NPROCS) / 2 )))
 
-GO_REQUIRED_VERSION ?= 1.21
+GO_REQUIRED_VERSION ?= 1.22
 # GOLANGCILINT_VERSION is inherited from build submodule by default.
 # Uncomment below if you need to override the version.
 # GOLANGCILINT_VERSION ?= 1.54.0
@@ -53,8 +49,8 @@ GO_SUBDIRS += cmd internal apis
 # ====================================================================================
 # Setup Kubernetes tools
 
-KIND_VERSION = v0.15.0
-UP_VERSION = v0.18.0
+KIND_VERSION = v0.18.0
+UP_VERSION = v0.28.0
 UP_CHANNEL = stable
 UPTEST_VERSION = v0.7.0
 -include build/makelib/k8s_tools.mk
@@ -69,10 +65,10 @@ IMAGES = $(PROJECT_NAME)
 # ====================================================================================
 # Setup XPKG
 
-XPKG_REG_ORGS ?= xpkg.upbound.io/upbound
+XPKG_REG_ORGS ?= ghcr.io/dana-team
 # NOTE(hasheddan): skip promoting on xpkg.upbound.io as channel tags are
 # inferred.
-XPKG_REG_ORGS_NO_PROMOTE ?= xpkg.upbound.io/upbound
+XPKG_REG_ORGS_NO_PROMOTE ?= ghcr.io/dana-team
 XPKGS = $(PROJECT_NAME)
 -include build/makelib/xpkg.mk
 
