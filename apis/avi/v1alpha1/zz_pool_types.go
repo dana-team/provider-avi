@@ -146,20 +146,6 @@ type AnalyticsPolicyParameters struct {
 	EnableRealtimeMetrics *string `json:"enableRealtimeMetrics,omitempty" tf:"enable_realtime_metrics,omitempty"`
 }
 
-type ConfigpbAttributesInitParameters struct {
-	Version *string `json:"version,omitempty" tf:"version,omitempty"`
-}
-
-type ConfigpbAttributesObservation struct {
-	Version *string `json:"version,omitempty" tf:"version,omitempty"`
-}
-
-type ConfigpbAttributesParameters struct {
-
-	// +kubebuilder:validation:Optional
-	Version *string `json:"version,omitempty" tf:"version,omitempty"`
-}
-
 type ConnPoolPropertiesInitParameters struct {
 	UpstreamConnpoolConnIdleTmo *string `json:"upstreamConnpoolConnIdleTmo,omitempty" tf:"upstream_connpool_conn_idle_tmo,omitempty"`
 
@@ -223,14 +209,35 @@ type DiscoveredNetworksParameters struct {
 	Subnet6 []Subnet6Parameters `json:"subnet6,omitempty" tf:"subnet6,omitempty"`
 }
 
+type DiscoveredNetworksSubnetIPAddrInitParameters struct {
+	Addr *string `json:"addr,omitempty" tf:"addr,omitempty"`
+
+	Type *string `json:"type,omitempty" tf:"type,omitempty"`
+}
+
+type DiscoveredNetworksSubnetIPAddrObservation struct {
+	Addr *string `json:"addr,omitempty" tf:"addr,omitempty"`
+
+	Type *string `json:"type,omitempty" tf:"type,omitempty"`
+}
+
+type DiscoveredNetworksSubnetIPAddrParameters struct {
+
+	// +kubebuilder:validation:Optional
+	Addr *string `json:"addr" tf:"addr,omitempty"`
+
+	// +kubebuilder:validation:Optional
+	Type *string `json:"type" tf:"type,omitempty"`
+}
+
 type DiscoveredNetworksSubnetInitParameters struct {
-	IPAddr []SubnetIPAddrInitParameters `json:"ipAddr,omitempty" tf:"ip_addr,omitempty"`
+	IPAddr []DiscoveredNetworksSubnetIPAddrInitParameters `json:"ipAddr,omitempty" tf:"ip_addr,omitempty"`
 
 	Mask *string `json:"mask,omitempty" tf:"mask,omitempty"`
 }
 
 type DiscoveredNetworksSubnetObservation struct {
-	IPAddr []SubnetIPAddrObservation `json:"ipAddr,omitempty" tf:"ip_addr,omitempty"`
+	IPAddr []DiscoveredNetworksSubnetIPAddrObservation `json:"ipAddr,omitempty" tf:"ip_addr,omitempty"`
 
 	Mask *string `json:"mask,omitempty" tf:"mask,omitempty"`
 }
@@ -238,7 +245,7 @@ type DiscoveredNetworksSubnetObservation struct {
 type DiscoveredNetworksSubnetParameters struct {
 
 	// +kubebuilder:validation:Optional
-	IPAddr []SubnetIPAddrParameters `json:"ipAddr" tf:"ip_addr,omitempty"`
+	IPAddr []DiscoveredNetworksSubnetIPAddrParameters `json:"ipAddr" tf:"ip_addr,omitempty"`
 
 	// +kubebuilder:validation:Optional
 	Mask *string `json:"mask" tf:"mask,omitempty"`
@@ -363,27 +370,6 @@ type Http2PropertiesParameters struct {
 	MaxHttp2HeaderFieldSize *string `json:"maxHttp2HeaderFieldSize,omitempty" tf:"max_http2_header_field_size,omitempty"`
 }
 
-type IPAddrInitParameters struct {
-	Addr *string `json:"addr,omitempty" tf:"addr,omitempty"`
-
-	Type *string `json:"type,omitempty" tf:"type,omitempty"`
-}
-
-type IPAddrObservation struct {
-	Addr *string `json:"addr,omitempty" tf:"addr,omitempty"`
-
-	Type *string `json:"type,omitempty" tf:"type,omitempty"`
-}
-
-type IPAddrParameters struct {
-
-	// +kubebuilder:validation:Optional
-	Addr *string `json:"addr" tf:"addr,omitempty"`
-
-	// +kubebuilder:validation:Optional
-	Type *string `json:"type" tf:"type,omitempty"`
-}
-
 type IPInitParameters struct {
 	Addr *string `json:"addr,omitempty" tf:"addr,omitempty"`
 
@@ -424,44 +410,6 @@ type LocalRspParameters struct {
 
 	// +kubebuilder:validation:Optional
 	StatusCode *string `json:"statusCode,omitempty" tf:"status_code,omitempty"`
-}
-
-type LocationInitParameters struct {
-	Latitude *string `json:"latitude,omitempty" tf:"latitude,omitempty"`
-
-	Longitude *string `json:"longitude,omitempty" tf:"longitude,omitempty"`
-
-	// The name of the pool. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
-	Name *string `json:"name,omitempty" tf:"name,omitempty"`
-
-	Tag *string `json:"tag,omitempty" tf:"tag,omitempty"`
-}
-
-type LocationObservation struct {
-	Latitude *string `json:"latitude,omitempty" tf:"latitude,omitempty"`
-
-	Longitude *string `json:"longitude,omitempty" tf:"longitude,omitempty"`
-
-	// The name of the pool. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
-	Name *string `json:"name,omitempty" tf:"name,omitempty"`
-
-	Tag *string `json:"tag,omitempty" tf:"tag,omitempty"`
-}
-
-type LocationParameters struct {
-
-	// +kubebuilder:validation:Optional
-	Latitude *string `json:"latitude,omitempty" tf:"latitude,omitempty"`
-
-	// +kubebuilder:validation:Optional
-	Longitude *string `json:"longitude,omitempty" tf:"longitude,omitempty"`
-
-	// The name of the pool. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
-	// +kubebuilder:validation:Optional
-	Name *string `json:"name,omitempty" tf:"name,omitempty"`
-
-	// +kubebuilder:validation:Optional
-	Tag *string `json:"tag,omitempty" tf:"tag,omitempty"`
 }
 
 type MarkersInitParameters struct {
@@ -632,6 +580,20 @@ type PlacementNetworksParameters struct {
 	Subnet []SubnetParameters `json:"subnet" tf:"subnet,omitempty"`
 }
 
+type PoolConfigpbAttributesInitParameters struct {
+	Version *string `json:"version,omitempty" tf:"version,omitempty"`
+}
+
+type PoolConfigpbAttributesObservation struct {
+	Version *string `json:"version,omitempty" tf:"version,omitempty"`
+}
+
+type PoolConfigpbAttributesParameters struct {
+
+	// +kubebuilder:validation:Optional
+	Version *string `json:"version,omitempty" tf:"version,omitempty"`
+}
+
 type PoolInitParameters struct {
 
 	// Determines analytics settings for the pool. Field introduced in 18.1.5, 18.2.1. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
@@ -668,7 +630,7 @@ type PoolInitParameters struct {
 	CloudRef *string `json:"cloudRef,omitempty" tf:"cloud_ref,omitempty"`
 
 	// Protobuf versioning for config pbs. Field introduced in 21.1.1. Allowed in enterprise edition with any value, essentials edition with any value, basic edition with any value, enterprise with cloud services edition.
-	ConfigpbAttributes []ConfigpbAttributesInitParameters `json:"configpbAttributes,omitempty" tf:"configpb_attributes,omitempty"`
+	ConfigpbAttributes []PoolConfigpbAttributesInitParameters `json:"configpbAttributes,omitempty" tf:"configpb_attributes,omitempty"`
 
 	// Connnection pool properties. Field introduced in 18.2.1. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
 	ConnPoolProperties []ConnPoolPropertiesInitParameters `json:"connPoolProperties,omitempty" tf:"conn_pool_properties,omitempty"`
@@ -712,6 +674,7 @@ type PoolInitParameters struct {
 	// Used to gracefully disable a server. Virtual service waits for the specified time before terminating the existing connections  to the servers that are disabled. Allowed values are 1-7200. Special values are 0 - immediate, -1 - infinite. Unit is min. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
 	GracefulDisableTimeout *string `json:"gracefulDisableTimeout,omitempty" tf:"graceful_disable_timeout,omitempty"`
 
+	// Time interval for gracefully closing the connections on server, when health monitoring marks the server down. Allowed values are 1-432000. Special values are 0 - immediate, -1 - infinite. Field introduced in 30.2.1. Unit is sec. Allowed in enterprise edition with any value, enterprise with cloud services edition.
 	GracefulHmDownDisableTimeout *string `json:"gracefulHmDownDisableTimeout,omitempty" tf:"graceful_hm_down_disable_timeout,omitempty"`
 
 	// Indicates if the pool is a site-persistence pool. Field introduced in 17.2.1. Allowed in enterprise edition with any value, enterprise with cloud services edition.
@@ -895,7 +858,7 @@ type PoolObservation struct {
 	CloudRef *string `json:"cloudRef,omitempty" tf:"cloud_ref,omitempty"`
 
 	// Protobuf versioning for config pbs. Field introduced in 21.1.1. Allowed in enterprise edition with any value, essentials edition with any value, basic edition with any value, enterprise with cloud services edition.
-	ConfigpbAttributes []ConfigpbAttributesObservation `json:"configpbAttributes,omitempty" tf:"configpb_attributes,omitempty"`
+	ConfigpbAttributes []PoolConfigpbAttributesObservation `json:"configpbAttributes,omitempty" tf:"configpb_attributes,omitempty"`
 
 	// Connnection pool properties. Field introduced in 18.2.1. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
 	ConnPoolProperties []ConnPoolPropertiesObservation `json:"connPoolProperties,omitempty" tf:"conn_pool_properties,omitempty"`
@@ -939,6 +902,7 @@ type PoolObservation struct {
 	// Used to gracefully disable a server. Virtual service waits for the specified time before terminating the existing connections  to the servers that are disabled. Allowed values are 1-7200. Special values are 0 - immediate, -1 - infinite. Unit is min. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
 	GracefulDisableTimeout *string `json:"gracefulDisableTimeout,omitempty" tf:"graceful_disable_timeout,omitempty"`
 
+	// Time interval for gracefully closing the connections on server, when health monitoring marks the server down. Allowed values are 1-432000. Special values are 0 - immediate, -1 - infinite. Field introduced in 30.2.1. Unit is sec. Allowed in enterprise edition with any value, enterprise with cloud services edition.
 	GracefulHmDownDisableTimeout *string `json:"gracefulHmDownDisableTimeout,omitempty" tf:"graceful_hm_down_disable_timeout,omitempty"`
 
 	// Indicates if the pool is a site-persistence pool. Field introduced in 17.2.1. Allowed in enterprise edition with any value, enterprise with cloud services edition.
@@ -1136,7 +1100,7 @@ type PoolParameters struct {
 
 	// Protobuf versioning for config pbs. Field introduced in 21.1.1. Allowed in enterprise edition with any value, essentials edition with any value, basic edition with any value, enterprise with cloud services edition.
 	// +kubebuilder:validation:Optional
-	ConfigpbAttributes []ConfigpbAttributesParameters `json:"configpbAttributes,omitempty" tf:"configpb_attributes,omitempty"`
+	ConfigpbAttributes []PoolConfigpbAttributesParameters `json:"configpbAttributes,omitempty" tf:"configpb_attributes,omitempty"`
 
 	// Connnection pool properties. Field introduced in 18.2.1. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
 	// +kubebuilder:validation:Optional
@@ -1194,6 +1158,7 @@ type PoolParameters struct {
 	// +kubebuilder:validation:Optional
 	GracefulDisableTimeout *string `json:"gracefulDisableTimeout,omitempty" tf:"graceful_disable_timeout,omitempty"`
 
+	// Time interval for gracefully closing the connections on server, when health monitoring marks the server down. Allowed values are 1-432000. Special values are 0 - immediate, -1 - infinite. Field introduced in 30.2.1. Unit is sec. Allowed in enterprise edition with any value, enterprise with cloud services edition.
 	// +kubebuilder:validation:Optional
 	GracefulHmDownDisableTimeout *string `json:"gracefulHmDownDisableTimeout,omitempty" tf:"graceful_hm_down_disable_timeout,omitempty"`
 
@@ -1390,27 +1355,6 @@ type PoolParameters struct {
 	VrfRef *string `json:"vrfRef,omitempty" tf:"vrf_ref,omitempty"`
 }
 
-type RangesInitParameters struct {
-	Begin *string `json:"begin,omitempty" tf:"begin,omitempty"`
-
-	End *string `json:"end,omitempty" tf:"end,omitempty"`
-}
-
-type RangesObservation struct {
-	Begin *string `json:"begin,omitempty" tf:"begin,omitempty"`
-
-	End *string `json:"end,omitempty" tf:"end,omitempty"`
-}
-
-type RangesParameters struct {
-
-	// +kubebuilder:validation:Optional
-	Begin *string `json:"begin" tf:"begin,omitempty"`
-
-	// +kubebuilder:validation:Optional
-	End *string `json:"end" tf:"end,omitempty"`
-}
-
 type RateLimiterInitParameters struct {
 	BurstSz *string `json:"burstSz,omitempty" tf:"burst_sz,omitempty"`
 
@@ -1564,7 +1508,7 @@ type ServersInitParameters struct {
 
 	IP []IPInitParameters `json:"ip,omitempty" tf:"ip,omitempty"`
 
-	Location []LocationInitParameters `json:"location,omitempty" tf:"location,omitempty"`
+	Location []ServersLocationInitParameters `json:"location,omitempty" tf:"location,omitempty"`
 
 	MacAddress *string `json:"macAddress,omitempty" tf:"mac_address,omitempty"`
 
@@ -1589,6 +1533,44 @@ type ServersInitParameters struct {
 	VMRef *string `json:"vmRef,omitempty" tf:"vm_ref,omitempty"`
 
 	VerifyNetwork *string `json:"verifyNetwork,omitempty" tf:"verify_network,omitempty"`
+}
+
+type ServersLocationInitParameters struct {
+	Latitude *string `json:"latitude,omitempty" tf:"latitude,omitempty"`
+
+	Longitude *string `json:"longitude,omitempty" tf:"longitude,omitempty"`
+
+	// The name of the pool. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
+	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	Tag *string `json:"tag,omitempty" tf:"tag,omitempty"`
+}
+
+type ServersLocationObservation struct {
+	Latitude *string `json:"latitude,omitempty" tf:"latitude,omitempty"`
+
+	Longitude *string `json:"longitude,omitempty" tf:"longitude,omitempty"`
+
+	// The name of the pool. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
+	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	Tag *string `json:"tag,omitempty" tf:"tag,omitempty"`
+}
+
+type ServersLocationParameters struct {
+
+	// +kubebuilder:validation:Optional
+	Latitude *string `json:"latitude,omitempty" tf:"latitude,omitempty"`
+
+	// +kubebuilder:validation:Optional
+	Longitude *string `json:"longitude,omitempty" tf:"longitude,omitempty"`
+
+	// The name of the pool. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
+	// +kubebuilder:validation:Optional
+	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// +kubebuilder:validation:Optional
+	Tag *string `json:"tag,omitempty" tf:"tag,omitempty"`
 }
 
 type ServersObservation struct {
@@ -1617,7 +1599,7 @@ type ServersObservation struct {
 
 	IP []IPObservation `json:"ip,omitempty" tf:"ip,omitempty"`
 
-	Location []LocationObservation `json:"location,omitempty" tf:"location,omitempty"`
+	Location []ServersLocationObservation `json:"location,omitempty" tf:"location,omitempty"`
 
 	MacAddress *string `json:"macAddress,omitempty" tf:"mac_address,omitempty"`
 
@@ -1680,7 +1662,7 @@ type ServersParameters struct {
 	IP []IPParameters `json:"ip" tf:"ip,omitempty"`
 
 	// +kubebuilder:validation:Optional
-	Location []LocationParameters `json:"location,omitempty" tf:"location,omitempty"`
+	Location []ServersLocationParameters `json:"location,omitempty" tf:"location,omitempty"`
 
 	// +kubebuilder:validation:Optional
 	MacAddress *string `json:"macAddress,omitempty" tf:"mac_address,omitempty"`
@@ -1804,13 +1786,13 @@ type SubnetIPAddrParameters struct {
 }
 
 type SubnetInitParameters struct {
-	IPAddr []IPAddrInitParameters `json:"ipAddr,omitempty" tf:"ip_addr,omitempty"`
+	IPAddr []SubnetIPAddrInitParameters `json:"ipAddr,omitempty" tf:"ip_addr,omitempty"`
 
 	Mask *string `json:"mask,omitempty" tf:"mask,omitempty"`
 }
 
 type SubnetObservation struct {
-	IPAddr []IPAddrObservation `json:"ipAddr,omitempty" tf:"ip_addr,omitempty"`
+	IPAddr []SubnetIPAddrObservation `json:"ipAddr,omitempty" tf:"ip_addr,omitempty"`
 
 	Mask *string `json:"mask,omitempty" tf:"mask,omitempty"`
 }
@@ -1818,7 +1800,7 @@ type SubnetObservation struct {
 type SubnetParameters struct {
 
 	// +kubebuilder:validation:Optional
-	IPAddr []IPAddrParameters `json:"ipAddr" tf:"ip_addr,omitempty"`
+	IPAddr []SubnetIPAddrParameters `json:"ipAddr" tf:"ip_addr,omitempty"`
 
 	// +kubebuilder:validation:Optional
 	Mask *string `json:"mask" tf:"mask,omitempty"`
@@ -1827,7 +1809,7 @@ type SubnetParameters struct {
 type SvrRespCodeInitParameters struct {
 	Codes []*int64 `json:"codes,omitempty" tf:"codes,omitempty"`
 
-	Ranges []RangesInitParameters `json:"ranges,omitempty" tf:"ranges,omitempty"`
+	Ranges []SvrRespCodeRangesInitParameters `json:"ranges,omitempty" tf:"ranges,omitempty"`
 
 	RespCodeBlock []*string `json:"respCodeBlock,omitempty" tf:"resp_code_block,omitempty"`
 }
@@ -1835,7 +1817,7 @@ type SvrRespCodeInitParameters struct {
 type SvrRespCodeObservation struct {
 	Codes []*int64 `json:"codes,omitempty" tf:"codes,omitempty"`
 
-	Ranges []RangesObservation `json:"ranges,omitempty" tf:"ranges,omitempty"`
+	Ranges []SvrRespCodeRangesObservation `json:"ranges,omitempty" tf:"ranges,omitempty"`
 
 	RespCodeBlock []*string `json:"respCodeBlock,omitempty" tf:"resp_code_block,omitempty"`
 }
@@ -1846,10 +1828,31 @@ type SvrRespCodeParameters struct {
 	Codes []*int64 `json:"codes,omitempty" tf:"codes,omitempty"`
 
 	// +kubebuilder:validation:Optional
-	Ranges []RangesParameters `json:"ranges,omitempty" tf:"ranges,omitempty"`
+	Ranges []SvrRespCodeRangesParameters `json:"ranges,omitempty" tf:"ranges,omitempty"`
 
 	// +kubebuilder:validation:Optional
 	RespCodeBlock []*string `json:"respCodeBlock,omitempty" tf:"resp_code_block,omitempty"`
+}
+
+type SvrRespCodeRangesInitParameters struct {
+	Begin *string `json:"begin,omitempty" tf:"begin,omitempty"`
+
+	End *string `json:"end,omitempty" tf:"end,omitempty"`
+}
+
+type SvrRespCodeRangesObservation struct {
+	Begin *string `json:"begin,omitempty" tf:"begin,omitempty"`
+
+	End *string `json:"end,omitempty" tf:"end,omitempty"`
+}
+
+type SvrRespCodeRangesParameters struct {
+
+	// +kubebuilder:validation:Optional
+	Begin *string `json:"begin" tf:"begin,omitempty"`
+
+	// +kubebuilder:validation:Optional
+	End *string `json:"end" tf:"end,omitempty"`
 }
 
 type TokensInitParameters struct {
