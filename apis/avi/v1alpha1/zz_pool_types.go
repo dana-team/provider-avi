@@ -412,27 +412,6 @@ type LocalRspParameters struct {
 	StatusCode *string `json:"statusCode,omitempty" tf:"status_code,omitempty"`
 }
 
-type MarkersInitParameters struct {
-	Key *string `json:"key,omitempty" tf:"key,omitempty"`
-
-	Values []*string `json:"values,omitempty" tf:"values,omitempty"`
-}
-
-type MarkersObservation struct {
-	Key *string `json:"key,omitempty" tf:"key,omitempty"`
-
-	Values []*string `json:"values,omitempty" tf:"values,omitempty"`
-}
-
-type MarkersParameters struct {
-
-	// +kubebuilder:validation:Optional
-	Key *string `json:"key" tf:"key,omitempty"`
-
-	// +kubebuilder:validation:Optional
-	Values []*string `json:"values,omitempty" tf:"values,omitempty"`
-}
-
 type MaxConnRatePerServerInitParameters struct {
 	Action []ActionInitParameters `json:"action,omitempty" tf:"action,omitempty"`
 
@@ -723,7 +702,7 @@ type PoolInitParameters struct {
 	LookupServerByName *string `json:"lookupServerByName,omitempty" tf:"lookup_server_by_name,omitempty"`
 
 	// List of labels to be used for granular rbac. Field introduced in 20.1.5. Allowed in enterprise edition with any value, essentials edition with any value, basic edition with any value, enterprise with cloud services edition.
-	Markers []MarkersInitParameters `json:"markers,omitempty" tf:"markers,omitempty"`
+	Markers []PoolMarkersInitParameters `json:"markers,omitempty" tf:"markers,omitempty"`
 
 	// The maximum number of concurrent connections allowed to each server within the pool. Note  applied value will be no less than the number of service engines that the pool is placed on. If set to 0, no limit is applied. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
 	MaxConcurrentConnectionsPerServer *string `json:"maxConcurrentConnectionsPerServer,omitempty" tf:"max_concurrent_connections_per_server,omitempty"`
@@ -820,6 +799,27 @@ type PoolInitParameters struct {
 
 	// Virtual routing context that the pool is bound to. This is used to provide the isolation of the set of networks the pool is attached to. The pool inherits the virtual routing context of the virtual service, and this field is used only internally, and is set by pb-transform. It is a reference to an object of type vrfcontext. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
 	VrfRef *string `json:"vrfRef,omitempty" tf:"vrf_ref,omitempty"`
+}
+
+type PoolMarkersInitParameters struct {
+	Key *string `json:"key,omitempty" tf:"key,omitempty"`
+
+	Values []*string `json:"values,omitempty" tf:"values,omitempty"`
+}
+
+type PoolMarkersObservation struct {
+	Key *string `json:"key,omitempty" tf:"key,omitempty"`
+
+	Values []*string `json:"values,omitempty" tf:"values,omitempty"`
+}
+
+type PoolMarkersParameters struct {
+
+	// +kubebuilder:validation:Optional
+	Key *string `json:"key" tf:"key,omitempty"`
+
+	// +kubebuilder:validation:Optional
+	Values []*string `json:"values,omitempty" tf:"values,omitempty"`
 }
 
 type PoolObservation struct {
@@ -953,7 +953,7 @@ type PoolObservation struct {
 	LookupServerByName *string `json:"lookupServerByName,omitempty" tf:"lookup_server_by_name,omitempty"`
 
 	// List of labels to be used for granular rbac. Field introduced in 20.1.5. Allowed in enterprise edition with any value, essentials edition with any value, basic edition with any value, enterprise with cloud services edition.
-	Markers []MarkersObservation `json:"markers,omitempty" tf:"markers,omitempty"`
+	Markers []PoolMarkersObservation `json:"markers,omitempty" tf:"markers,omitempty"`
 
 	// The maximum number of concurrent connections allowed to each server within the pool. Note  applied value will be no less than the number of service engines that the pool is placed on. If set to 0, no limit is applied. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
 	MaxConcurrentConnectionsPerServer *string `json:"maxConcurrentConnectionsPerServer,omitempty" tf:"max_concurrent_connections_per_server,omitempty"`
@@ -1224,7 +1224,7 @@ type PoolParameters struct {
 
 	// List of labels to be used for granular rbac. Field introduced in 20.1.5. Allowed in enterprise edition with any value, essentials edition with any value, basic edition with any value, enterprise with cloud services edition.
 	// +kubebuilder:validation:Optional
-	Markers []MarkersParameters `json:"markers,omitempty" tf:"markers,omitempty"`
+	Markers []PoolMarkersParameters `json:"markers,omitempty" tf:"markers,omitempty"`
 
 	// The maximum number of concurrent connections allowed to each server within the pool. Note  applied value will be no less than the number of service engines that the pool is placed on. If set to 0, no limit is applied. Allowed in enterprise edition with any value, essentials, basic, enterprise with cloud services edition.
 	// +kubebuilder:validation:Optional

@@ -13,7 +13,7 @@ Avi API.
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: provider-dns
+  name: provider-avi
 spec:
   package: ghcr.io/dana-team/provider-avi:<release>
   runtimeConfigRef:

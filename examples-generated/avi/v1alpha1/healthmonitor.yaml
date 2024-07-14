@@ -1,0 +1,12 @@
+apiVersion: avi.crossplane.io/v1alpha1
+kind: HealthMonitor
+metadata:
+  annotations:
+    meta.upbound.io/example-id: avi/v1alpha1/healthmonitor
+  labels:
+    testing.upbound.io/example-name: foo
+  name: foo
+spec:
+  forProvider:
+    name: terraform-example-foo
+    tenantRef: /api/tenant/?name=admin

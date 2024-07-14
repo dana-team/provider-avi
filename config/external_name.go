@@ -14,6 +14,8 @@ var terraformPluginSDKExternalNameConfigs = map[string]config.ExternalName{
 	"avi_serviceengine":      config.IdentifierFromProvider,
 	"avi_serviceenginegroup": config.IdentifierFromProvider,
 	"avi_virtualservice":     config.IdentifierFromProvider,
+	"avi_healthmonitor":      config.IdentifierFromProvider,
+	"avi_vsvip":              config.IdentifierFromProvider,
 }
 
 var terraformPluginFrameworkExternalNameConfigs = map[string]config.ExternalName{}

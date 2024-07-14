@@ -16,6 +16,15 @@ func (l *GSLBList) GetItems() []resource.Managed {
 	return items
 }
 
+// GetItems of this HealthMonitorList.
+func (l *HealthMonitorList) GetItems() []resource.Managed {
+	items := make([]resource.Managed, len(l.Items))
+	for i := range l.Items {
+		items[i] = &l.Items[i]
+	}
+	return items
+}
+
 // GetItems of this PoolList.
 func (l *PoolList) GetItems() []resource.Managed {
 	items := make([]resource.Managed, len(l.Items))
@@ -45,6 +54,15 @@ func (l *ServiceEngineList) GetItems() []resource.Managed {
 
 // GetItems of this VirtualServiceList.
 func (l *VirtualServiceList) GetItems() []resource.Managed {
+	items := make([]resource.Managed, len(l.Items))
+	for i := range l.Items {
+		items[i] = &l.Items[i]
+	}
+	return items
+}
+
+// GetItems of this VsVipList.
+func (l *VsVipList) GetItems() []resource.Managed {
 	items := make([]resource.Managed, len(l.Items))
 	for i := range l.Items {
 		items[i] = &l.Items[i]

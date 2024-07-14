@@ -10,10 +10,12 @@ import (
 	"github.com/crossplane/upjet/pkg/controller"
 
 	gslb "github.com/dana-team/provider-avi/internal/controller/avi/gslb"
+	healthmonitor "github.com/dana-team/provider-avi/internal/controller/avi/healthmonitor"
 	pool "github.com/dana-team/provider-avi/internal/controller/avi/pool"
 	serviceengine "github.com/dana-team/provider-avi/internal/controller/avi/serviceengine"
 	serviceenginegroup "github.com/dana-team/provider-avi/internal/controller/avi/serviceenginegroup"
 	virtualservice "github.com/dana-team/provider-avi/internal/controller/avi/virtualservice"
+	vsvip "github.com/dana-team/provider-avi/internal/controller/avi/vsvip"
 	providerconfig "github.com/dana-team/provider-avi/internal/controller/providerconfig"
 )
 
@@ -22,10 +24,12 @@ import (
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
 		gslb.Setup,
+		healthmonitor.Setup,
 		pool.Setup,
 		serviceengine.Setup,
 		serviceenginegroup.Setup,
 		virtualservice.Setup,
+		vsvip.Setup,
 		providerconfig.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {
