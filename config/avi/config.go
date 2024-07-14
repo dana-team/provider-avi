@@ -38,4 +38,15 @@ func Configure(p *config.Provider) {
 		r.Kind = "VirtualService"
 		r.Version = apiVersion
 	})
+	p.AddResourceConfigurator("avi_healthmonitor", func(r *config.Resource) {
+		r.ShortGroup = shortGroup
+		r.Kind = "HealthMonitor"
+		r.Version = apiVersion
+	})
+	p.AddResourceConfigurator("avi_vsvip", func(r *config.Resource) {
+		r.ShortGroup = shortGroup
+		r.Kind = "VsVip"
+		r.Version = apiVersion
+	})
+
 }
