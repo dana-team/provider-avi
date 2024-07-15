@@ -6,10 +6,9 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"flag"
 	"io"
 	"log"
-	"os"
 	"path/filepath"
 	"time"
 
@@ -43,40 +42,39 @@ import (
 
 func main() {
 	var (
-		app               = kingpin.New(filepath.Base(os.Args[0]), "Terraform based Crossplane provider for Avi").DefaultEnvars()
-		deprecationAction = func(flagName string) kingpin.Action {
-			return func(c *kingpin.ParseContext) error {
-				_, err := fmt.Fprintf(os.Stderr, "warning: Command-line flag %q is deprecated and no longer used. It will be removed in a future release. Please remove it from all of your configurations (ControllerConfigs, etc.).\n", flagName)
-				kingpin.FatalIfError(err, "Failed to print the deprecation notice.")
-				return nil
-			}
-		}
-		debug                   = app.Flag("debug", "Run with debug logging.").Short('d').Bool()
-		syncPeriod              = app.Flag("sync", "Controller manager sync period such as 300ms, 1.5h, or 2h45m").Short('s').Default("1h").Duration()
-		pollInterval            = app.Flag("poll", "Poll interval controls how often an individual resource should be checked for drift.").Default("10m").Duration()
-		pollStateMetricInterval = app.Flag("poll-state-metric", "State metric recording interval").Default("5s").Duration()
-		leaderElection          = app.Flag("leader-election", "Use leader election for the controller manager.").Short('l').Default("false").OverrideDefaultFromEnvar("LEADER_ELECTION").Bool()
-		maxReconcileRate        = app.Flag("max-reconcile-rate", "The global maximum rate per second at which resources may checked for drift from the desired state.").Default("10").Int()
-		// now deprecated command-line arguments with the Terraform SDK-based upjet architecture
-		_ = app.Flag("terraform-version", "[DEPRECATED: This option is no longer used and it will be removed in a future release.] Terraform version.").Envar("TERRAFORM_VERSION").Hidden().Action(deprecationAction("terraform-version")).String()
-		_ = app.Flag("terraform-provider-version", "[DEPRECATED: This option is no longer used and it will be removed in a future release.] Terraform provider version.").Envar("TERRAFORM_PROVIDER_VERSION").Hidden().Action(deprecationAction("terraform-provider-version")).String()
-		_ = app.Flag("terraform-native-provider-path", "[DEPRECATED: This option is no longer used and it will be removed in a future release.] Terraform native provider path for shared execution.").Default("").Envar("TERRAFORM_NATIVE_PROVIDER_PATH").Hidden().Action(deprecationAction("terraform-native-provider-path")).String()
-		_ = app.Flag("terraform-provider-source", "[DEPRECATED: This option is no longer used and it will be removed in a future release.] Terraform provider source.").Envar("TERRAFORM_PROVIDER_SOURCE").Hidden().Action(deprecationAction("terraform-provider-source")).String()
-		_ = app.Flag("provider-ttl", "[DEPRECATED: This option is no longer used and it will be removed in a future release.] TTL for the native plugin processes before they are replaced. Changing the default may increase memory consumption.").Default("100").Hidden().Action(deprecationAction("provider-ttl")).Int()
-
-		namespace                  = app.Flag("namespace", "Namespace used to set as default scope in default secret store config.").Default("crossplane-system").Envar("POD_NAMESPACE").String()
-		enableExternalSecretStores = app.Flag("enable-external-secret-stores", "Enable support for ExternalSecretStores.").Default("false").Envar("ENABLE_EXTERNAL_SECRET_STORES").Bool()
-		essTLSCertsPath            = app.Flag("ess-tls-cert-dir", "Path of ESS TLS certificates.").Envar("ESS_TLS_CERTS_DIR").String()
-		enableManagementPolicies   = app.Flag("enable-management-policies", "Enable support for Management Policies.").Default("true").Envar("ENABLE_MANAGEMENT_POLICIES").Bool()
+		debug                      bool
+		syncPeriod                 time.Duration
+		pollInterval               time.Duration
+		pollStateMetricInterval    time.Duration
+		leaderElection             bool
+		maxReconcileRate           int
+		namespace                  string
+		enableExternalSecretStores bool
+		essTLSCertsPath            string
+		enableManagementPolicies   bool
 	)
 
-	kingpin.MustParse(app.Parse(os.Args[1:]))
+	flag.BoolVar(&debug, "debug", false, "Run with debug logging.")
+	flag.BoolVar(&debug, "d", false, "Run with debug logging (shorthand).")
+	flag.DurationVar(&syncPeriod, "sync", time.Hour, "Controller manager sync period such as 300ms, 1.5h, or 2h45m")
+	flag.DurationVar(&pollInterval, "poll", 10*time.Minute, "Poll interval controls how often an individual resource should be checked for drift.")
+	flag.DurationVar(&pollStateMetricInterval, "poll-state-metric", 5*time.Second, "State metric recording interval")
+	flag.BoolVar(&leaderElection, "leader-election", false, "Use leader election for the controller manager.")
+	flag.IntVar(&maxReconcileRate, "max-reconcile-rate", 10, "The global maximum rate per second at which resources may be checked for drift from the desired state.")
+	flag.StringVar(&namespace, "namespace", "crossplane-system", "Namespace used to set as default scope in default secret store config.")
+	flag.BoolVar(&enableExternalSecretStores, "enable-external-secret-stores", false, "Enable support for ExternalSecretStores.")
+	flag.StringVar(&essTLSCertsPath, "ess-tls-cert-dir", "", "Path of ESS TLS certificates.")
+	flag.BoolVar(&enableManagementPolicies, "enable-management-policies", true, "Enable support for Management Policies.")
+
+	// Parse the command-line flags
+	flag.Parse()
+
 	log.Default().SetOutput(io.Discard)
 	ctrl.SetLogger(zap.New(zap.WriteTo(io.Discard)))
 
-	zl := zap.New(zap.UseDevMode(*debug))
+	zl := zap.New(zap.UseDevMode(debug))
 	logr := logging.NewLogrLogger(zl.WithName("provider-avi"))
-	if *debug {
+	if debug {
 		// The controller-runtime runs with a no-op logger by default. It is
 		// *very* verbose even at info level, so we only provide it a real
 		// logger when we're running in debug mode.
@@ -84,18 +82,18 @@ func main() {
 	}
 
 	// currently, we configure the jitter to be the 5% of the poll interval
-	pollJitter := time.Duration(float64(*pollInterval) * 0.05)
+	pollJitter := time.Duration(float64(pollInterval) * 0.05)
 	logr.Debug("Starting", "sync-period", syncPeriod.String(),
-		"poll-interval", pollInterval.String(), "poll-jitter", pollJitter, "max-reconcile-rate", *maxReconcileRate)
+		"poll-interval", pollInterval.String(), "poll-jitter", pollJitter, "max-reconcile-rate", maxReconcileRate)
 
 	cfg, err := ctrl.GetConfig()
 	kingpin.FatalIfError(err, "Cannot get API server rest config")
 
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
-		LeaderElection:   *leaderElection,
+		LeaderElection:   leaderElection,
 		LeaderElectionID: "crossplane-leader-election-provider-avi",
 		Cache: cache.Options{
-			SyncPeriod: syncPeriod,
+			SyncPeriod: &syncPeriod,
 		},
 		LeaderElectionResourceLock: resourcelock.LeasesResourceLock,
 		LeaseDuration:              func() *time.Duration { d := 60 * time.Second; return &d }(),
@@ -114,12 +112,12 @@ func main() {
 	o := tjcontroller.Options{
 		Options: xpcontroller.Options{
 			Logger:                  logr,
-			GlobalRateLimiter:       ratelimiter.NewGlobal(*maxReconcileRate),
-			PollInterval:            *pollInterval,
-			MaxConcurrentReconciles: *maxReconcileRate,
+			GlobalRateLimiter:       ratelimiter.NewGlobal(maxReconcileRate),
+			PollInterval:            pollInterval,
+			MaxConcurrentReconciles: maxReconcileRate,
 			Features:                &feature.Flags{},
 			MetricOptions: &xpcontroller.MetricOptions{
-				PollStateMetricInterval: *pollStateMetricInterval,
+				PollStateMetricInterval: pollStateMetricInterval,
 				MRMetrics:               metricRecorder,
 				MRStateMetrics:          stateMetrics,
 			},
@@ -130,19 +128,19 @@ func main() {
 		OperationTrackerStore: tjcontroller.NewOperationStore(logr),
 	}
 
-	if *enableManagementPolicies {
+	if enableManagementPolicies {
 		o.Features.Enable(features.EnableBetaManagementPolicies)
 		logr.Info("Beta feature enabled", "flag", features.EnableBetaManagementPolicies)
 	}
 
-	if *enableExternalSecretStores {
+	if enableExternalSecretStores {
 		o.SecretStoreConfigGVK = &v1alpha1.StoreConfigGroupVersionKind
 		logr.Info("Alpha feature enabled", "flag", features.EnableAlphaExternalSecretStores)
 
 		o.ESSOptions = &tjcontroller.ESSOptions{}
-		if *essTLSCertsPath != "" {
+		if essTLSCertsPath != "" {
 			logr.Info("ESS TLS certificates path is set. Loading mTLS configuration.")
-			tCfg, err := certificates.LoadMTLSConfig(filepath.Join(*essTLSCertsPath, "ca.crt"), filepath.Join(*essTLSCertsPath, "tls.crt"), filepath.Join(*essTLSCertsPath, "tls.key"), false)
+			tCfg, err := certificates.LoadMTLSConfig(filepath.Join(essTLSCertsPath, "ca.crt"), filepath.Join(essTLSCertsPath, "tls.crt"), filepath.Join(essTLSCertsPath, "tls.key"), false)
 			kingpin.FatalIfError(err, "Cannot load ESS TLS config.")
 
 			o.ESSOptions.TLSConfig = tCfg
@@ -155,7 +153,7 @@ func main() {
 			},
 			Spec: v1alpha1.StoreConfigSpec{
 				SecretStoreConfig: xpv1.SecretStoreConfig{
-					DefaultScope: *namespace,
+					DefaultScope: namespace,
 				},
 			},
 		})), "cannot create default store config")
