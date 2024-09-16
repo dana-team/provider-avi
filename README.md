@@ -9,6 +9,14 @@ Avi API.
 
 ### Install the provider
 
+#### Helm
+
+Helm chart docs are available on `charts/provider-avi`.
+
+```
+$ helm upgrade --install provider-avi --namespace crossplane-system --create-namespace oci://ghcr.io/dana-team/helm-charts/provider-avi --version <release>
+```
+
 ```yaml
 apiVersion: pkg.crossplane.io/v1
 kind: Provider

@@ -1,0 +1,13 @@
+apiVersion: dns.dns.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: {{ .Values.providerConfig.name }}
+  labels:
+    {{- include "provider-avi.labels" . | nindent 4 }}
+spec:
+  credentials:
+    source: {{ .Values.providerConfig.credentials.source }}
+    secretRef:
+      name: {{ .Values.providerConfig.credentials.secretRef.name }}
+      namespace: {{ .Values.providerConfig.credentials.secretRef.namespace }}
+      key: {{ .Values.providerConfig.credentials.secretRef.key }}

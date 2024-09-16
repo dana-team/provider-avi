@@ -1,0 +1,1493 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.14.0
+  name: gslbs.avi.crossplane.io
+spec:
+  group: avi.crossplane.io
+  names:
+    categories:
+    - crossplane
+    - managed
+    - avi
+    kind: GSLB
+    listKind: GSLBList
+    plural: gslbs
+    singular: gslb
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[?(@.type=='Synced')].status
+      name: SYNCED
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: READY
+      type: string
+    - jsonPath: .metadata.annotations.crossplane\.io/external-name
+      name: EXTERNAL-NAME
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: GSLB is the Schema for the GSLBs API. Creates and manages Avi
+          Gslb.
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: GSLBSpec defines the desired state of GSLB
+            properties:
+              deletionPolicy:
+                default: Delete
+                description: |-
+                  DeletionPolicy specifies what will happen to the underlying external
+                  when this managed resource is deleted - either "Delete" or "Orphan" the
+                  external resource.
+                  This field is planned to be deprecated in favor of the ManagementPolicies
+                  field in a future release. Currently, both could be set independently and
+                  non-default values would be honored if the feature flag is enabled.
+                  See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
+                enum:
+                - Orphan
+                - Delete
+                type: string
+              forProvider:
+                properties:
+                  asyncInterval:
+                    description: Frequency with which messages are propagated to vs
+                      mgr. Value of 0 disables async behavior and rpc are sent inline.
+                      Allowed values are 0-5. Field introduced in 18.2.3. Unit is
+                      sec. Allowed in enterprise edition with any value, essentials,
+                      basic, enterprise with cloud services edition.
+                    type: string
+                  clearOnMaxRetries:
+                    description: Max retries after which the remote site is treated
+                      as a fresh start. In fresh start all the configs are downloaded.
+                      Allowed values are 1-1024. Allowed in enterprise edition with
+                      any value, essentials, basic, enterprise with cloud services
+                      edition.
+                    type: string
+                  clientIpAddrGroup:
+                    description: Group to specify if the client ip addresses are public
+                      or private. Field introduced in 17.1.2. Allowed in enterprise
+                      edition with any value, essentials, basic, enterprise with cloud
+                      services edition.
+                    items:
+                      properties:
+                        addrs:
+                          items:
+                            properties:
+                              addr:
+                                type: string
+                              type:
+                                type: string
+                            type: object
+                          type: array
+                        prefixes:
+                          items:
+                            properties:
+                              ipAddr:
+                                items:
+                                  properties:
+                                    addr:
+                                      type: string
+                                    type:
+                                      type: string
+                                  type: object
+                                type: array
+                              mask:
+                                type: string
+                            type: object
+                          type: array
+                        ranges:
+                          items:
+                            properties:
+                              begin:
+                                items:
+                                  properties:
+                                    addr:
+                                      type: string
+                                    type:
+                                      type: string
+                                  type: object
+                                type: array
+                              end:
+                                items:
+                                  properties:
+                                    addr:
+                                      type: string
+                                    type:
+                                      type: string
+                                  type: object
+                                type: array
+                            type: object
+                          type: array
+                        type:
+                          type: string
+                      type: object
+                    type: array
+                  configpbAttributes:
+                    description: Protobuf versioning for config pbs. Field introduced
+                      in 21.1.1. Allowed in enterprise edition with any value, essentials
+                      edition with any value, basic edition with any value, enterprise
+                      with cloud services edition.
+                    items:
+                      properties:
+                        version:
+                          type: string
+                      type: object
+                    type: array
+                  description:
+                    description: Allowed in enterprise edition with any value, essentials,
+                      basic, enterprise with cloud services edition.
+                    type: string
+                  dnsConfigs:
+                    description: Sub domain configuration for the gslb. Gslb service's
+                      fqdn must be a match one of these subdomains. Allowed in enterprise
+                      edition with any value, essentials, basic, enterprise with cloud
+                      services edition.
+                    items:
+                      properties:
+                        domainName:
+                          description: Name for the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                      type: object
+                    type: array
+                  enableConfigByMembers:
+                    description: Allows enable/disable of gslbservice pool groups
+                      and pool members from the gslb follower members. Field introduced
+                      in 20.1.5. Allowed in enterprise edition with any value, enterprise
+                      with cloud services edition.
+                    type: string
+                  errorResyncInterval:
+                    description: Frequency with which errored messages are resynced
+                      to follower sites. Value of 0 disables resync behavior. Allowed
+                      values are 60-3600. Special values are 0 - disable. Field introduced
+                      in 18.2.3. Unit is sec. Allowed in enterprise edition with any
+                      value, essentials, basic, enterprise with cloud services edition.
+                    type: string
+                  fileobjectMaxFileVersions:
+                    description: This is the max number of file versions that will
+                      be retained for a file referenced by the federated fileobject.
+                      Subsequent uploads of file will result in the file rotation
+                      of the older version and the latest version retained. Example  when
+                      a file upload is done for the first time, there will be a v1
+                      version. Subsequent uploads will get mapped to v1, v2 and v3
+                      versions. On the fourth upload of the file, the v1 will be file
+                      rotated and v2, v3 and v4 will be retained. Allowed values are
+                      1-5. Field introduced in 30.2.1. Allowed in enterprise edition
+                      with any value, enterprise with cloud services edition.
+                    type: string
+                  isFederated:
+                    description: This field indicates that this object is replicated
+                      across gslb federation. Field introduced in 17.1.3. Allowed
+                      in enterprise edition with any value, essentials, basic, enterprise
+                      with cloud services edition.
+                    type: string
+                  leaderClusterUuid:
+                    description: Mark this site as leader of gslb configuration. This
+                      site is the one among the avi sites. Allowed in enterprise edition
+                      with any value, essentials, basic, enterprise with cloud services
+                      edition.
+                    type: string
+                  maintenanceMode:
+                    description: This field disables the configuration operations
+                      on the leader for all federated objects. Cud operations on gslb,
+                      gslbservice, gslbgeodbprofile and other federated objects will
+                      be rejected. The rest-api disabling helps in upgrade scenarios
+                      where we don't want configuration sync operations to the gslb
+                      member when the member is being upgraded. This configuration
+                      programmatically blocks the leader from accepting new gslb configuration
+                      when member sites are undergoing upgrade. Field introduced in
+                      17.2.1. Allowed in enterprise edition with any value, essentials,
+                      basic, enterprise with cloud services edition.
+                    type: string
+                  name:
+                    description: Name for the gslb object. Allowed in enterprise edition
+                      with any value, essentials, basic, enterprise with cloud services
+                      edition.
+                    type: string
+                  replicationPolicy:
+                    description: Policy for replicating configuration to the active
+                      follower sites. Field introduced in 20.1.1. Allowed in enterprise
+                      edition with any value, essentials, basic, enterprise with cloud
+                      services edition.
+                    items:
+                      properties:
+                        checkpointRef:
+                          type: string
+                        replicationMode:
+                          type: string
+                      type: object
+                    type: array
+                  sendInterval:
+                    description: Frequency with which group members communicate. Allowed
+                      values are 1-3600. Unit is sec. Allowed in enterprise edition
+                      with any value, essentials, basic, enterprise with cloud services
+                      edition.
+                    type: string
+                  sendIntervalPriorToMaintenanceMode:
+                    description: The user can specify a send-interval while entering
+                      maintenance mode. The validity of this 'maintenance send-interval'
+                      is only during maintenance mode. When the user leaves maintenance
+                      mode, the original send-interval is reinstated. This internal
+                      variable is used to store the original send-interval. Field
+                      introduced in 18.2.3. Unit is sec. Allowed in enterprise edition
+                      with any value, essentials edition with any value, basic edition
+                      with any value, enterprise with cloud services edition.
+                    type: string
+                  sites:
+                    description: Select avi site member belonging to this gslb. Minimum
+                      of 1 items required. Allowed in enterprise edition with any
+                      value, essentials, basic, enterprise with cloud services edition.
+                    items:
+                      properties:
+                        address:
+                          type: string
+                        clusterUuid:
+                          description: Uuid of the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                        dnsVses:
+                          items:
+                            properties:
+                              dnsVsUuid:
+                                description: Uuid of the gslb object. Allowed in enterprise
+                                  edition with any value, essentials, basic, enterprise
+                                  with cloud services edition.
+                                type: string
+                              domainNames:
+                                items:
+                                  type: string
+                                type: array
+                            type: object
+                          type: array
+                        enabled:
+                          type: string
+                        hmProxies:
+                          items:
+                            properties:
+                              proxyType:
+                                type: string
+                              siteUuid:
+                                description: Uuid of the gslb object. Allowed in enterprise
+                                  edition with any value, essentials, basic, enterprise
+                                  with cloud services edition.
+                                type: string
+                            type: object
+                          type: array
+                        hmShardEnabled:
+                          type: string
+                        ipAddresses:
+                          items:
+                            properties:
+                              addr:
+                                type: string
+                              type:
+                                type: string
+                            type: object
+                          type: array
+                        location:
+                          items:
+                            properties:
+                              location:
+                                items:
+                                  properties:
+                                    latitude:
+                                      type: string
+                                    longitude:
+                                      type: string
+                                    name:
+                                      description: Name for the gslb object. Allowed
+                                        in enterprise edition with any value, essentials,
+                                        basic, enterprise with cloud services edition.
+                                      type: string
+                                    tag:
+                                      type: string
+                                  type: object
+                                type: array
+                              source:
+                                type: string
+                            type: object
+                          type: array
+                        memberType:
+                          type: string
+                        name:
+                          description: Name for the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                        passwordSecretRef:
+                          description: A SecretKeySelector is a reference to a secret
+                            key in an arbitrary namespace.
+                          properties:
+                            key:
+                              description: The key to select.
+                              type: string
+                            name:
+                              description: Name of the secret.
+                              type: string
+                            namespace:
+                              description: Namespace of the secret.
+                              type: string
+                          required:
+                          - key
+                          - name
+                          - namespace
+                          type: object
+                        port:
+                          type: string
+                        ratio:
+                          type: string
+                        suspendMode:
+                          type: string
+                        username:
+                          description: Name for the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                        uuid:
+                          description: Uuid of the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                      type: object
+                    type: array
+                  tenantRef:
+                    description: It is a reference to an object of type tenant. Allowed
+                      in enterprise edition with any value, essentials, basic, enterprise
+                      with cloud services edition.
+                    type: string
+                  tenantScoped:
+                    description: This field indicates tenant visibility for gs pool
+                      member selection across the gslb federated objects.tenant scope
+                      can be set only during the gslb create and cannot be changed
+                      once it is set. Field introduced in 18.2.12,20.1.4. Allowed
+                      in enterprise edition with any value, enterprise with cloud
+                      services edition.
+                    type: string
+                  thirdPartySites:
+                    description: Third party site member belonging to this gslb. Field
+                      introduced in 17.1.1. Allowed in enterprise edition with any
+                      value, essentials, basic, enterprise with cloud services edition.
+                    items:
+                      properties:
+                        clusterUuid:
+                          description: Uuid of the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                        enabled:
+                          type: string
+                        hmProxies:
+                          items:
+                            properties:
+                              proxyType:
+                                type: string
+                              siteUuid:
+                                description: Uuid of the gslb object. Allowed in enterprise
+                                  edition with any value, essentials, basic, enterprise
+                                  with cloud services edition.
+                                type: string
+                            type: object
+                          type: array
+                        location:
+                          items:
+                            properties:
+                              location:
+                                items:
+                                  properties:
+                                    latitude:
+                                      type: string
+                                    longitude:
+                                      type: string
+                                    name:
+                                      description: Name for the gslb object. Allowed
+                                        in enterprise edition with any value, essentials,
+                                        basic, enterprise with cloud services edition.
+                                      type: string
+                                    tag:
+                                      type: string
+                                  type: object
+                                type: array
+                              source:
+                                type: string
+                            type: object
+                          type: array
+                        name:
+                          description: Name for the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                        ratio:
+                          type: string
+                        uuid:
+                          description: Uuid of the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                      type: object
+                    type: array
+                  uuid:
+                    description: Uuid of the gslb object. Allowed in enterprise edition
+                      with any value, essentials, basic, enterprise with cloud services
+                      edition.
+                    type: string
+                  viewId:
+                    description: The view-id is used in change-leader mode to differentiate
+                      partitioned groups while they have the same gslb namespace.
+                      Each partitioned group will be able to operate independently
+                      by using the view-id. Allowed in enterprise edition with any
+                      value, essentials, basic, enterprise with cloud services edition.
+                    type: string
+                type: object
+              initProvider:
+                description: |-
+                  THIS IS A BETA FIELD. It will be honored
+                  unless the Management Policies feature flag is disabled.
+                  InitProvider holds the same fields as ForProvider, with the exception
+                  of Identifier and other resource reference fields. The fields that are
+                  in InitProvider are merged into ForProvider when the resource is created.
+                  The same fields are also added to the terraform ignore_changes hook, to
+                  avoid updating them after creation. This is useful for fields that are
+                  required on creation, but we do not desire to update them after creation,
+                  for example because of an external controller is managing them, like an
+                  autoscaler.
+                properties:
+                  asyncInterval:
+                    description: Frequency with which messages are propagated to vs
+                      mgr. Value of 0 disables async behavior and rpc are sent inline.
+                      Allowed values are 0-5. Field introduced in 18.2.3. Unit is
+                      sec. Allowed in enterprise edition with any value, essentials,
+                      basic, enterprise with cloud services edition.
+                    type: string
+                  clearOnMaxRetries:
+                    description: Max retries after which the remote site is treated
+                      as a fresh start. In fresh start all the configs are downloaded.
+                      Allowed values are 1-1024. Allowed in enterprise edition with
+                      any value, essentials, basic, enterprise with cloud services
+                      edition.
+                    type: string
+                  clientIpAddrGroup:
+                    description: Group to specify if the client ip addresses are public
+                      or private. Field introduced in 17.1.2. Allowed in enterprise
+                      edition with any value, essentials, basic, enterprise with cloud
+                      services edition.
+                    items:
+                      properties:
+                        addrs:
+                          items:
+                            properties:
+                              addr:
+                                type: string
+                              type:
+                                type: string
+                            type: object
+                          type: array
+                        prefixes:
+                          items:
+                            properties:
+                              ipAddr:
+                                items:
+                                  properties:
+                                    addr:
+                                      type: string
+                                    type:
+                                      type: string
+                                  type: object
+                                type: array
+                              mask:
+                                type: string
+                            type: object
+                          type: array
+                        ranges:
+                          items:
+                            properties:
+                              begin:
+                                items:
+                                  properties:
+                                    addr:
+                                      type: string
+                                    type:
+                                      type: string
+                                  type: object
+                                type: array
+                              end:
+                                items:
+                                  properties:
+                                    addr:
+                                      type: string
+                                    type:
+                                      type: string
+                                  type: object
+                                type: array
+                            type: object
+                          type: array
+                        type:
+                          type: string
+                      type: object
+                    type: array
+                  configpbAttributes:
+                    description: Protobuf versioning for config pbs. Field introduced
+                      in 21.1.1. Allowed in enterprise edition with any value, essentials
+                      edition with any value, basic edition with any value, enterprise
+                      with cloud services edition.
+                    items:
+                      properties:
+                        version:
+                          type: string
+                      type: object
+                    type: array
+                  description:
+                    description: Allowed in enterprise edition with any value, essentials,
+                      basic, enterprise with cloud services edition.
+                    type: string
+                  dnsConfigs:
+                    description: Sub domain configuration for the gslb. Gslb service's
+                      fqdn must be a match one of these subdomains. Allowed in enterprise
+                      edition with any value, essentials, basic, enterprise with cloud
+                      services edition.
+                    items:
+                      properties:
+                        domainName:
+                          description: Name for the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                      type: object
+                    type: array
+                  enableConfigByMembers:
+                    description: Allows enable/disable of gslbservice pool groups
+                      and pool members from the gslb follower members. Field introduced
+                      in 20.1.5. Allowed in enterprise edition with any value, enterprise
+                      with cloud services edition.
+                    type: string
+                  errorResyncInterval:
+                    description: Frequency with which errored messages are resynced
+                      to follower sites. Value of 0 disables resync behavior. Allowed
+                      values are 60-3600. Special values are 0 - disable. Field introduced
+                      in 18.2.3. Unit is sec. Allowed in enterprise edition with any
+                      value, essentials, basic, enterprise with cloud services edition.
+                    type: string
+                  fileobjectMaxFileVersions:
+                    description: This is the max number of file versions that will
+                      be retained for a file referenced by the federated fileobject.
+                      Subsequent uploads of file will result in the file rotation
+                      of the older version and the latest version retained. Example  when
+                      a file upload is done for the first time, there will be a v1
+                      version. Subsequent uploads will get mapped to v1, v2 and v3
+                      versions. On the fourth upload of the file, the v1 will be file
+                      rotated and v2, v3 and v4 will be retained. Allowed values are
+                      1-5. Field introduced in 30.2.1. Allowed in enterprise edition
+                      with any value, enterprise with cloud services edition.
+                    type: string
+                  isFederated:
+                    description: This field indicates that this object is replicated
+                      across gslb federation. Field introduced in 17.1.3. Allowed
+                      in enterprise edition with any value, essentials, basic, enterprise
+                      with cloud services edition.
+                    type: string
+                  leaderClusterUuid:
+                    description: Mark this site as leader of gslb configuration. This
+                      site is the one among the avi sites. Allowed in enterprise edition
+                      with any value, essentials, basic, enterprise with cloud services
+                      edition.
+                    type: string
+                  maintenanceMode:
+                    description: This field disables the configuration operations
+                      on the leader for all federated objects. Cud operations on gslb,
+                      gslbservice, gslbgeodbprofile and other federated objects will
+                      be rejected. The rest-api disabling helps in upgrade scenarios
+                      where we don't want configuration sync operations to the gslb
+                      member when the member is being upgraded. This configuration
+                      programmatically blocks the leader from accepting new gslb configuration
+                      when member sites are undergoing upgrade. Field introduced in
+                      17.2.1. Allowed in enterprise edition with any value, essentials,
+                      basic, enterprise with cloud services edition.
+                    type: string
+                  name:
+                    description: Name for the gslb object. Allowed in enterprise edition
+                      with any value, essentials, basic, enterprise with cloud services
+                      edition.
+                    type: string
+                  replicationPolicy:
+                    description: Policy for replicating configuration to the active
+                      follower sites. Field introduced in 20.1.1. Allowed in enterprise
+                      edition with any value, essentials, basic, enterprise with cloud
+                      services edition.
+                    items:
+                      properties:
+                        checkpointRef:
+                          type: string
+                        replicationMode:
+                          type: string
+                      type: object
+                    type: array
+                  sendInterval:
+                    description: Frequency with which group members communicate. Allowed
+                      values are 1-3600. Unit is sec. Allowed in enterprise edition
+                      with any value, essentials, basic, enterprise with cloud services
+                      edition.
+                    type: string
+                  sendIntervalPriorToMaintenanceMode:
+                    description: The user can specify a send-interval while entering
+                      maintenance mode. The validity of this 'maintenance send-interval'
+                      is only during maintenance mode. When the user leaves maintenance
+                      mode, the original send-interval is reinstated. This internal
+                      variable is used to store the original send-interval. Field
+                      introduced in 18.2.3. Unit is sec. Allowed in enterprise edition
+                      with any value, essentials edition with any value, basic edition
+                      with any value, enterprise with cloud services edition.
+                    type: string
+                  sites:
+                    description: Select avi site member belonging to this gslb. Minimum
+                      of 1 items required. Allowed in enterprise edition with any
+                      value, essentials, basic, enterprise with cloud services edition.
+                    items:
+                      properties:
+                        address:
+                          type: string
+                        clusterUuid:
+                          description: Uuid of the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                        dnsVses:
+                          items:
+                            properties:
+                              dnsVsUuid:
+                                description: Uuid of the gslb object. Allowed in enterprise
+                                  edition with any value, essentials, basic, enterprise
+                                  with cloud services edition.
+                                type: string
+                              domainNames:
+                                items:
+                                  type: string
+                                type: array
+                            type: object
+                          type: array
+                        enabled:
+                          type: string
+                        hmProxies:
+                          items:
+                            properties:
+                              proxyType:
+                                type: string
+                              siteUuid:
+                                description: Uuid of the gslb object. Allowed in enterprise
+                                  edition with any value, essentials, basic, enterprise
+                                  with cloud services edition.
+                                type: string
+                            type: object
+                          type: array
+                        hmShardEnabled:
+                          type: string
+                        ipAddresses:
+                          items:
+                            properties:
+                              addr:
+                                type: string
+                              type:
+                                type: string
+                            type: object
+                          type: array
+                        location:
+                          items:
+                            properties:
+                              location:
+                                items:
+                                  properties:
+                                    latitude:
+                                      type: string
+                                    longitude:
+                                      type: string
+                                    name:
+                                      description: Name for the gslb object. Allowed
+                                        in enterprise edition with any value, essentials,
+                                        basic, enterprise with cloud services edition.
+                                      type: string
+                                    tag:
+                                      type: string
+                                  type: object
+                                type: array
+                              source:
+                                type: string
+                            type: object
+                          type: array
+                        memberType:
+                          type: string
+                        name:
+                          description: Name for the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                        passwordSecretRef:
+                          description: A SecretKeySelector is a reference to a secret
+                            key in an arbitrary namespace.
+                          properties:
+                            key:
+                              description: The key to select.
+                              type: string
+                            name:
+                              description: Name of the secret.
+                              type: string
+                            namespace:
+                              description: Namespace of the secret.
+                              type: string
+                          required:
+                          - key
+                          - name
+                          - namespace
+                          type: object
+                        port:
+                          type: string
+                        ratio:
+                          type: string
+                        suspendMode:
+                          type: string
+                        username:
+                          description: Name for the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                        uuid:
+                          description: Uuid of the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                      required:
+                      - passwordSecretRef
+                      type: object
+                    type: array
+                  tenantRef:
+                    description: It is a reference to an object of type tenant. Allowed
+                      in enterprise edition with any value, essentials, basic, enterprise
+                      with cloud services edition.
+                    type: string
+                  tenantScoped:
+                    description: This field indicates tenant visibility for gs pool
+                      member selection across the gslb federated objects.tenant scope
+                      can be set only during the gslb create and cannot be changed
+                      once it is set. Field introduced in 18.2.12,20.1.4. Allowed
+                      in enterprise edition with any value, enterprise with cloud
+                      services edition.
+                    type: string
+                  thirdPartySites:
+                    description: Third party site member belonging to this gslb. Field
+                      introduced in 17.1.1. Allowed in enterprise edition with any
+                      value, essentials, basic, enterprise with cloud services edition.
+                    items:
+                      properties:
+                        clusterUuid:
+                          description: Uuid of the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                        enabled:
+                          type: string
+                        hmProxies:
+                          items:
+                            properties:
+                              proxyType:
+                                type: string
+                              siteUuid:
+                                description: Uuid of the gslb object. Allowed in enterprise
+                                  edition with any value, essentials, basic, enterprise
+                                  with cloud services edition.
+                                type: string
+                            type: object
+                          type: array
+                        location:
+                          items:
+                            properties:
+                              location:
+                                items:
+                                  properties:
+                                    latitude:
+                                      type: string
+                                    longitude:
+                                      type: string
+                                    name:
+                                      description: Name for the gslb object. Allowed
+                                        in enterprise edition with any value, essentials,
+                                        basic, enterprise with cloud services edition.
+                                      type: string
+                                    tag:
+                                      type: string
+                                  type: object
+                                type: array
+                              source:
+                                type: string
+                            type: object
+                          type: array
+                        name:
+                          description: Name for the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                        ratio:
+                          type: string
+                        uuid:
+                          description: Uuid of the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                      type: object
+                    type: array
+                  uuid:
+                    description: Uuid of the gslb object. Allowed in enterprise edition
+                      with any value, essentials, basic, enterprise with cloud services
+                      edition.
+                    type: string
+                  viewId:
+                    description: The view-id is used in change-leader mode to differentiate
+                      partitioned groups while they have the same gslb namespace.
+                      Each partitioned group will be able to operate independently
+                      by using the view-id. Allowed in enterprise edition with any
+                      value, essentials, basic, enterprise with cloud services edition.
+                    type: string
+                type: object
+              managementPolicies:
+                default:
+                - '*'
+                description: |-
+                  THIS IS A BETA FIELD. It is on by default but can be opted out
+                  through a Crossplane feature flag.
+                  ManagementPolicies specify the array of actions Crossplane is allowed to
+                  take on the managed and external resources.
+                  This field is planned to replace the DeletionPolicy field in a future
+                  release. Currently, both could be set independently and non-default
+                  values would be honored if the feature flag is enabled. If both are
+                  custom, the DeletionPolicy field will be ignored.
+                  See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
+                  and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
+                items:
+                  description: |-
+                    A ManagementAction represents an action that the Crossplane controllers
+                    can take on an external resource.
+                  enum:
+                  - Observe
+                  - Create
+                  - Update
+                  - Delete
+                  - LateInitialize
+                  - '*'
+                  type: string
+                type: array
+              providerConfigRef:
+                default:
+                  name: default
+                description: |-
+                  ProviderConfigReference specifies how the provider that will be used to
+                  create, observe, update, and delete this managed resource should be
+                  configured.
+                properties:
+                  name:
+                    description: Name of the referenced object.
+                    type: string
+                  policy:
+                    description: Policies for referencing.
+                    properties:
+                      resolution:
+                        default: Required
+                        description: |-
+                          Resolution specifies whether resolution of this reference is required.
+                          The default is 'Required', which means the reconcile will fail if the
+                          reference cannot be resolved. 'Optional' means this reference will be
+                          a no-op if it cannot be resolved.
+                        enum:
+                        - Required
+                        - Optional
+                        type: string
+                      resolve:
+                        description: |-
+                          Resolve specifies when this reference should be resolved. The default
+                          is 'IfNotPresent', which will attempt to resolve the reference only when
+                          the corresponding field is not present. Use 'Always' to resolve the
+                          reference on every reconcile.
+                        enum:
+                        - Always
+                        - IfNotPresent
+                        type: string
+                    type: object
+                required:
+                - name
+                type: object
+              publishConnectionDetailsTo:
+                description: |-
+                  PublishConnectionDetailsTo specifies the connection secret config which
+                  contains a name, metadata and a reference to secret store config to
+                  which any connection details for this managed resource should be written.
+                  Connection details frequently include the endpoint, username,
+                  and password required to connect to the managed resource.
+                properties:
+                  configRef:
+                    default:
+                      name: default
+                    description: |-
+                      SecretStoreConfigRef specifies which secret store config should be used
+                      for this ConnectionSecret.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  metadata:
+                    description: Metadata is the metadata for connection secret.
+                    properties:
+                      annotations:
+                        additionalProperties:
+                          type: string
+                        description: |-
+                          Annotations are the annotations to be added to connection secret.
+                          - For Kubernetes secrets, this will be used as "metadata.annotations".
+                          - It is up to Secret Store implementation for others store types.
+                        type: object
+                      labels:
+                        additionalProperties:
+                          type: string
+                        description: |-
+                          Labels are the labels/tags to be added to connection secret.
+                          - For Kubernetes secrets, this will be used as "metadata.labels".
+                          - It is up to Secret Store implementation for others store types.
+                        type: object
+                      type:
+                        description: |-
+                          Type is the SecretType for the connection secret.
+                          - Only valid for Kubernetes Secret Stores.
+                        type: string
+                    type: object
+                  name:
+                    description: Name is the name of the connection secret.
+                    type: string
+                required:
+                - name
+                type: object
+              writeConnectionSecretToRef:
+                description: |-
+                  WriteConnectionSecretToReference specifies the namespace and name of a
+                  Secret to which any connection details for this managed resource should
+                  be written. Connection details frequently include the endpoint, username,
+                  and password required to connect to the managed resource.
+                  This field is planned to be replaced in a future release in favor of
+                  PublishConnectionDetailsTo. Currently, both could be set independently
+                  and connection details would be published to both without affecting
+                  each other.
+                properties:
+                  name:
+                    description: Name of the secret.
+                    type: string
+                  namespace:
+                    description: Namespace of the secret.
+                    type: string
+                required:
+                - name
+                - namespace
+                type: object
+            required:
+            - forProvider
+            type: object
+            x-kubernetes-validations:
+            - message: spec.forProvider.leaderClusterUuid is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.leaderClusterUuid)
+                || (has(self.initProvider) && has(self.initProvider.leaderClusterUuid))'
+            - message: spec.forProvider.name is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
+                || (has(self.initProvider) && has(self.initProvider.name))'
+            - message: spec.forProvider.sites is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.sites)
+                || (has(self.initProvider) && has(self.initProvider.sites))'
+          status:
+            description: GSLBStatus defines the observed state of GSLB.
+            properties:
+              atProvider:
+                properties:
+                  asyncInterval:
+                    description: Frequency with which messages are propagated to vs
+                      mgr. Value of 0 disables async behavior and rpc are sent inline.
+                      Allowed values are 0-5. Field introduced in 18.2.3. Unit is
+                      sec. Allowed in enterprise edition with any value, essentials,
+                      basic, enterprise with cloud services edition.
+                    type: string
+                  clearOnMaxRetries:
+                    description: Max retries after which the remote site is treated
+                      as a fresh start. In fresh start all the configs are downloaded.
+                      Allowed values are 1-1024. Allowed in enterprise edition with
+                      any value, essentials, basic, enterprise with cloud services
+                      edition.
+                    type: string
+                  clientIpAddrGroup:
+                    description: Group to specify if the client ip addresses are public
+                      or private. Field introduced in 17.1.2. Allowed in enterprise
+                      edition with any value, essentials, basic, enterprise with cloud
+                      services edition.
+                    items:
+                      properties:
+                        addrs:
+                          items:
+                            properties:
+                              addr:
+                                type: string
+                              type:
+                                type: string
+                            type: object
+                          type: array
+                        prefixes:
+                          items:
+                            properties:
+                              ipAddr:
+                                items:
+                                  properties:
+                                    addr:
+                                      type: string
+                                    type:
+                                      type: string
+                                  type: object
+                                type: array
+                              mask:
+                                type: string
+                            type: object
+                          type: array
+                        ranges:
+                          items:
+                            properties:
+                              begin:
+                                items:
+                                  properties:
+                                    addr:
+                                      type: string
+                                    type:
+                                      type: string
+                                  type: object
+                                type: array
+                              end:
+                                items:
+                                  properties:
+                                    addr:
+                                      type: string
+                                    type:
+                                      type: string
+                                  type: object
+                                type: array
+                            type: object
+                          type: array
+                        type:
+                          type: string
+                      type: object
+                    type: array
+                  configpbAttributes:
+                    description: Protobuf versioning for config pbs. Field introduced
+                      in 21.1.1. Allowed in enterprise edition with any value, essentials
+                      edition with any value, basic edition with any value, enterprise
+                      with cloud services edition.
+                    items:
+                      properties:
+                        version:
+                          type: string
+                      type: object
+                    type: array
+                  description:
+                    description: Allowed in enterprise edition with any value, essentials,
+                      basic, enterprise with cloud services edition.
+                    type: string
+                  dnsConfigs:
+                    description: Sub domain configuration for the gslb. Gslb service's
+                      fqdn must be a match one of these subdomains. Allowed in enterprise
+                      edition with any value, essentials, basic, enterprise with cloud
+                      services edition.
+                    items:
+                      properties:
+                        domainName:
+                          description: Name for the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                      type: object
+                    type: array
+                  enableConfigByMembers:
+                    description: Allows enable/disable of gslbservice pool groups
+                      and pool members from the gslb follower members. Field introduced
+                      in 20.1.5. Allowed in enterprise edition with any value, enterprise
+                      with cloud services edition.
+                    type: string
+                  errorResyncInterval:
+                    description: Frequency with which errored messages are resynced
+                      to follower sites. Value of 0 disables resync behavior. Allowed
+                      values are 60-3600. Special values are 0 - disable. Field introduced
+                      in 18.2.3. Unit is sec. Allowed in enterprise edition with any
+                      value, essentials, basic, enterprise with cloud services edition.
+                    type: string
+                  fileobjectMaxFileVersions:
+                    description: This is the max number of file versions that will
+                      be retained for a file referenced by the federated fileobject.
+                      Subsequent uploads of file will result in the file rotation
+                      of the older version and the latest version retained. Example  when
+                      a file upload is done for the first time, there will be a v1
+                      version. Subsequent uploads will get mapped to v1, v2 and v3
+                      versions. On the fourth upload of the file, the v1 will be file
+                      rotated and v2, v3 and v4 will be retained. Allowed values are
+                      1-5. Field introduced in 30.2.1. Allowed in enterprise edition
+                      with any value, enterprise with cloud services edition.
+                    type: string
+                  id:
+                    type: string
+                  isFederated:
+                    description: This field indicates that this object is replicated
+                      across gslb federation. Field introduced in 17.1.3. Allowed
+                      in enterprise edition with any value, essentials, basic, enterprise
+                      with cloud services edition.
+                    type: string
+                  leaderClusterUuid:
+                    description: Mark this site as leader of gslb configuration. This
+                      site is the one among the avi sites. Allowed in enterprise edition
+                      with any value, essentials, basic, enterprise with cloud services
+                      edition.
+                    type: string
+                  maintenanceMode:
+                    description: This field disables the configuration operations
+                      on the leader for all federated objects. Cud operations on gslb,
+                      gslbservice, gslbgeodbprofile and other federated objects will
+                      be rejected. The rest-api disabling helps in upgrade scenarios
+                      where we don't want configuration sync operations to the gslb
+                      member when the member is being upgraded. This configuration
+                      programmatically blocks the leader from accepting new gslb configuration
+                      when member sites are undergoing upgrade. Field introduced in
+                      17.2.1. Allowed in enterprise edition with any value, essentials,
+                      basic, enterprise with cloud services edition.
+                    type: string
+                  name:
+                    description: Name for the gslb object. Allowed in enterprise edition
+                      with any value, essentials, basic, enterprise with cloud services
+                      edition.
+                    type: string
+                  replicationPolicy:
+                    description: Policy for replicating configuration to the active
+                      follower sites. Field introduced in 20.1.1. Allowed in enterprise
+                      edition with any value, essentials, basic, enterprise with cloud
+                      services edition.
+                    items:
+                      properties:
+                        checkpointRef:
+                          type: string
+                        replicationMode:
+                          type: string
+                      type: object
+                    type: array
+                  sendInterval:
+                    description: Frequency with which group members communicate. Allowed
+                      values are 1-3600. Unit is sec. Allowed in enterprise edition
+                      with any value, essentials, basic, enterprise with cloud services
+                      edition.
+                    type: string
+                  sendIntervalPriorToMaintenanceMode:
+                    description: The user can specify a send-interval while entering
+                      maintenance mode. The validity of this 'maintenance send-interval'
+                      is only during maintenance mode. When the user leaves maintenance
+                      mode, the original send-interval is reinstated. This internal
+                      variable is used to store the original send-interval. Field
+                      introduced in 18.2.3. Unit is sec. Allowed in enterprise edition
+                      with any value, essentials edition with any value, basic edition
+                      with any value, enterprise with cloud services edition.
+                    type: string
+                  sites:
+                    description: Select avi site member belonging to this gslb. Minimum
+                      of 1 items required. Allowed in enterprise edition with any
+                      value, essentials, basic, enterprise with cloud services edition.
+                    items:
+                      properties:
+                        address:
+                          type: string
+                        clusterUuid:
+                          description: Uuid of the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                        dnsVses:
+                          items:
+                            properties:
+                              dnsVsUuid:
+                                description: Uuid of the gslb object. Allowed in enterprise
+                                  edition with any value, essentials, basic, enterprise
+                                  with cloud services edition.
+                                type: string
+                              domainNames:
+                                items:
+                                  type: string
+                                type: array
+                            type: object
+                          type: array
+                        enabled:
+                          type: string
+                        hmProxies:
+                          items:
+                            properties:
+                              proxyType:
+                                type: string
+                              siteUuid:
+                                description: Uuid of the gslb object. Allowed in enterprise
+                                  edition with any value, essentials, basic, enterprise
+                                  with cloud services edition.
+                                type: string
+                            type: object
+                          type: array
+                        hmShardEnabled:
+                          type: string
+                        ipAddresses:
+                          items:
+                            properties:
+                              addr:
+                                type: string
+                              type:
+                                type: string
+                            type: object
+                          type: array
+                        location:
+                          items:
+                            properties:
+                              location:
+                                items:
+                                  properties:
+                                    latitude:
+                                      type: string
+                                    longitude:
+                                      type: string
+                                    name:
+                                      description: Name for the gslb object. Allowed
+                                        in enterprise edition with any value, essentials,
+                                        basic, enterprise with cloud services edition.
+                                      type: string
+                                    tag:
+                                      type: string
+                                  type: object
+                                type: array
+                              source:
+                                type: string
+                            type: object
+                          type: array
+                        memberType:
+                          type: string
+                        name:
+                          description: Name for the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                        port:
+                          type: string
+                        ratio:
+                          type: string
+                        suspendMode:
+                          type: string
+                        username:
+                          description: Name for the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                        uuid:
+                          description: Uuid of the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                      type: object
+                    type: array
+                  tenantRef:
+                    description: It is a reference to an object of type tenant. Allowed
+                      in enterprise edition with any value, essentials, basic, enterprise
+                      with cloud services edition.
+                    type: string
+                  tenantScoped:
+                    description: This field indicates tenant visibility for gs pool
+                      member selection across the gslb federated objects.tenant scope
+                      can be set only during the gslb create and cannot be changed
+                      once it is set. Field introduced in 18.2.12,20.1.4. Allowed
+                      in enterprise edition with any value, enterprise with cloud
+                      services edition.
+                    type: string
+                  thirdPartySites:
+                    description: Third party site member belonging to this gslb. Field
+                      introduced in 17.1.1. Allowed in enterprise edition with any
+                      value, essentials, basic, enterprise with cloud services edition.
+                    items:
+                      properties:
+                        clusterUuid:
+                          description: Uuid of the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                        enabled:
+                          type: string
+                        hmProxies:
+                          items:
+                            properties:
+                              proxyType:
+                                type: string
+                              siteUuid:
+                                description: Uuid of the gslb object. Allowed in enterprise
+                                  edition with any value, essentials, basic, enterprise
+                                  with cloud services edition.
+                                type: string
+                            type: object
+                          type: array
+                        location:
+                          items:
+                            properties:
+                              location:
+                                items:
+                                  properties:
+                                    latitude:
+                                      type: string
+                                    longitude:
+                                      type: string
+                                    name:
+                                      description: Name for the gslb object. Allowed
+                                        in enterprise edition with any value, essentials,
+                                        basic, enterprise with cloud services edition.
+                                      type: string
+                                    tag:
+                                      type: string
+                                  type: object
+                                type: array
+                              source:
+                                type: string
+                            type: object
+                          type: array
+                        name:
+                          description: Name for the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                        ratio:
+                          type: string
+                        uuid:
+                          description: Uuid of the gslb object. Allowed in enterprise
+                            edition with any value, essentials, basic, enterprise
+                            with cloud services edition.
+                          type: string
+                      type: object
+                    type: array
+                  uuid:
+                    description: Uuid of the gslb object. Allowed in enterprise edition
+                      with any value, essentials, basic, enterprise with cloud services
+                      edition.
+                    type: string
+                  viewId:
+                    description: The view-id is used in change-leader mode to differentiate
+                      partitioned groups while they have the same gslb namespace.
+                      Each partitioned group will be able to operate independently
+                      by using the view-id. Allowed in enterprise edition with any
+                      value, essentials, basic, enterprise with cloud services edition.
+                    type: string
+                type: object
+              conditions:
+                description: Conditions of the resource.
+                items:
+                  description: A Condition that may apply to a resource.
+                  properties:
+                    lastTransitionTime:
+                      description: |-
+                        LastTransitionTime is the last time this condition transitioned from one
+                        status to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: |-
+                        A Message containing details about this condition's last transition from
+                        one status to another, if any.
+                      type: string
+                    observedGeneration:
+                      description: |-
+                        ObservedGeneration represents the .metadata.generation that the condition was set based upon.
+                        For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                        with respect to the current state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: A Reason for this condition's last transition from
+                        one status to another.
+                      type: string
+                    status:
+                      description: Status of this condition; is it currently True,
+                        False, or Unknown?
+                      type: string
+                    type:
+                      description: |-
+                        Type of this condition. At most one of each condition type may apply to
+                        a resource at any point in time.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+                x-kubernetes-list-map-keys:
+                - type
+                x-kubernetes-list-type: map
+              observedGeneration:
+                description: |-
+                  ObservedGeneration is the latest metadata.generation
+                  which resulted in either a ready state, or stalled due to error
+                  it can not recover from without human intervention.
+                format: int64
+                type: integer
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
