@@ -1,0 +1,20 @@
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: {{ .Values.deploymentRuntimeConfig.name }}
+  labels:
+    {{- include "provider-avi.labels" . | nindent 4 }}
+spec:
+  deploymentTemplate:
+    spec:
+      selector:
+        matchLabels:
+          pkg.crossplane.io/provider: {{ .Values.provider.name }}
+      template:
+        spec:
+          containers:
+            - name: {{ .Values.deploymentRuntimeConfig.container.name }}
+              args:
+              {{- range .Values.deploymentRuntimeConfig.container.args }}
+              - {{ . }}
+              {{- end }}

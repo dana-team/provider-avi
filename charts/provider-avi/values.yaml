@@ -1,0 +1,57 @@
+# Default values for provider-avi.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  # -- The repository of the provider container image.
+  repository: ghcr.io/dana-team/provider-avi
+  # -- The tag of the manager container image.
+  tag: ""
+
+# Override the name of the deployment
+nameOverride: ""
+
+# Override the full name of the deployment
+fullnameOverride: ""
+
+provider:
+  # -- Name of the provider
+  name: provider-avi
+  runtimeConfigRef:
+    # -- Name of the DeploymentRuntimeConfig object to use
+    name: avi-config
+
+# -- Configuration to be added to the provider deployment via the DeploymentRuntimeConfig resource
+deploymentRuntimeConfig:
+  name: dns-config
+  container:
+    args:
+      - --debug
+    name: package-runtime
+
+# -- Provider authentication configuration
+providerConfig:
+  name: avi-default
+  credentials:
+    source: Secret
+    secretRef:
+      name: avi-creds
+      namespace: crossplane-system
+      key: credentials
+
+# -- Secret values for the provider authentication.
+secret:
+  # -- Name of the secret.
+  name: avi-creds
+  # -- Type of the secret.
+  type: Opaque
+  # -- Username to connect to authenticate with.
+  username: dana
+  # -- Password to connect to authenticate with.
+  password: passw0rd
+  # -- Name of the tenant to connect to.
+  tenant: test
+  # -- IP of the controller to connect to.
+  controller: 127.0.0.1
+  # -- Version of the controller.
+  version: 21.1.1

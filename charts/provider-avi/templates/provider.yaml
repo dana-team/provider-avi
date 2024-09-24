@@ -1,0 +1,12 @@
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: {{ .Values.provider.name }}
+  labels:
+    {{- include "provider-avi.labels" . | nindent 4 }}
+spec:
+  package: {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+  runtimeConfigRef:
+    apiVersion: pkg.crossplane.io/v1beta1
+    kind: DeploymentRuntimeConfig
+    name: {{ .Values.provider.runtimeConfigRef.name }}

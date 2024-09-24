@@ -241,3 +241,45 @@ crossplane.help:
 help-special: crossplane.help
 
 .PHONY: crossplane.help help-special
+
+# ====================================================================================
+## Location to install dependencies to
+LOCALBIN ?= $(shell pwd)/bin
+$(LOCALBIN):
+	mkdir -p $(LOCALBIN)
+
+## Tool Binaries
+HELM_DOCS ?= $(LOCALBIN)/helm-docs-$(HELM_DOCS_VERSION)
+HELM_URL ?= https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+
+## Tool Versions
+HELM_DOCS_VERSION ?= v1.14.2
+
+.PHONY: doc-chart
+doc-chart: helm-docs helm
+	$(HELM_DOCS) charts/
+
+.PHONY: helm
+helm:
+	wget -O $(LOCALBIN)/get-helm.sh $(HELM_URL)
+	chmod 700 $(LOCALBIN)/get-helm.sh
+	$(LOCALBIN)/get-helm.sh
+
+.PHONY: helm-docs
+helm-docs: $(HELM_DOCS)
+$(HELM_DOCS): $(LOCALBIN)
+	$(call go-install-tool,$(HELM_DOCS),github.com/norwoodj/helm-docs/cmd/helm-docs,$(HELM_DOCS_VERSION))
+
+# go-install-tool will 'go install' any package with custom target and name of binary, if it doesn't exist
+# $1 - target path with name of binary (ideally with version)
+# $2 - package url which can be installed
+# $3 - specific version of package
+define go-install-tool
+@[ -f $(1) ] || { \
+set -e; \
+package=$(2)@$(3) ;\
+echo "Downloading $${package}" ;\
+GOBIN=$(LOCALBIN) go install $${package} ;\
+mv "$$(echo "$(1)" | sed "s/-$(3)$$//")" $(1) ;\
+}
+endef
