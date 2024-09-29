@@ -1,4 +1,4 @@
-apiVersion: dns.dns.crossplane.io/v1beta1
+apiVersion: avi.crossplane.io/v1beta1
 kind: ProviderConfig
 metadata:
   name: {{ .Values.providerConfig.name }}
