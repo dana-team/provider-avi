@@ -8,7 +8,7 @@ A Helm chart for Crossplane provider-avi.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| deploymentRuntimeConfig | object | `{"container":{"args":["--debug"],"name":"package-runtime"},"name":"dns-config"}` | Configuration to be added to the provider deployment via the DeploymentRuntimeConfig resource |
+| deploymentRuntimeConfig | object | `{"container":{"args":["--debug"],"name":"package-runtime"},"name":"avi-config"}` | Configuration to be added to the provider deployment via the DeploymentRuntimeConfig resource |
 | fullnameOverride | string | `""` |  |
 | image.repository | string | `"ghcr.io/dana-team/provider-avi"` | The repository of the provider container image. |
 | image.tag | string | `""` | The tag of the manager container image. |

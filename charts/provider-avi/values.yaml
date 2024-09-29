@@ -23,7 +23,7 @@ provider:
 
 # -- Configuration to be added to the provider deployment via the DeploymentRuntimeConfig resource
 deploymentRuntimeConfig:
-  name: dns-config
+  name: avi-config
   container:
     args:
       - --debug
