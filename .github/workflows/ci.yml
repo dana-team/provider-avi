@@ -193,7 +193,7 @@ jobs:
         run: make -j2 test
 
       - name: Publish Unit Test Coverage
-        uses: codecov/codecov-action@1e68e06f1dbfde0e4cefc87efeba9e4643565303 # v3
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v3
         with:
           flags: unittests
           file: _output/tests/linux_amd64/coverage.txt
